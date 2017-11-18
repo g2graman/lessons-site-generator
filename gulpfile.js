@@ -1,152 +1,168 @@
 'use strict';
 
-const packages = require('./package.json');
+const path = require('path');
 
 const gulp = require('gulp');
-const path = require('path');
 const extraFs = require('fs-extra-promise');
 const _ = require('lodash');
 const matter = require('gray-matter');
 const request = require('request-promise');
 const gulpLoadPlugins = require('gulp-load-plugins');
+
+const packages = require('./package.json');
+
 const $ = gulpLoadPlugins({config: packages});
 
-const cheerio = require('cheerio');
-const HtmlEntities = require('entities');
-const Remarkable = require('remarkable');
-const md = new Remarkable();
-
 // START TOKENS
-const START_CODE_HTML_TOKEN = '<code class="language-javascript">';
-const END_CODE_HTML_TOKEN = '</code>';
+const START_CODE_MARKDOWN_TOKEN = '```javascript';
+const END_CODE_MARKDOWN_TOKEN = '```';
 // END TOKENS
 
 const REPL_IT_ROOT = 'https://repl.it';
 
-const getMatchingBlocks = (content, START_TOKEN, END_TOKEN) => {
-    let index = 0;
-    let blocks = [];
-
-    let startIndex = content.slice(index).indexOf(START_TOKEN);
-
-    while (index !== undefined && startIndex !== -1) {
-        let fromStartToken = content.slice(index).slice(startIndex);
-
-        let endIndexFromStart = fromStartToken.indexOf(END_TOKEN);
-        endIndexFromStart = endIndexFromStart === -1
-            ? undefined
-            : endIndexFromStart + END_TOKEN.length;
-
-        let newBlock = endIndexFromStart === undefined
-            ? fromStartToken
-            : fromStartToken.slice(0, endIndexFromStart);
-
-        blocks.push(HtmlEntities.decodeHTML(cheerio(newBlock).html())); // decode special HTML encodings
-
-        index = index + startIndex + endIndexFromStart;
-        startIndex = content.slice(index).indexOf(START_TOKEN);
-    }
-
-    return blocks;
+const getNthOccurrenceIndex = (string, subString, index) => {
+  return string.split(subString, index).join(subString).length;
 };
 
-// TODO: use OAUTH TOKEN TO CREATE GIST AS CERTAIN USER
-const createGist = (jsGistContent) => {
-    if (typeof jsGistContent !== 'string' || jsGistContent.length === 0) {
-        return Promise.resolve(false);
+const getMatchingMarkdownBlocks = (markdownContent, START_TOKEN, END_TOKEN) => {
+  let index = 0;
+  const blocks = [];
+  let metadata = {};
+
+  let startIndex = markdownContent.slice(index).indexOf(START_TOKEN);
+
+  while (index !== undefined && startIndex !== -1) {
+    const fromStartToken = markdownContent.slice(index).slice(startIndex);
+
+    const nthOccurrenceIndex = getNthOccurrenceIndex(fromStartToken, END_TOKEN, 2);
+    const endIndexFromStart = nthOccurrenceIndex === -1 ?
+      nthOccurrenceIndex :
+      nthOccurrenceIndex + END_TOKEN.length;
+
+    const newBlock = endIndexFromStart === -1 ?
+      fromStartToken :
+      fromStartToken.slice(0, endIndexFromStart);
+
+    const truncatedNewBlock = newBlock.slice(START_TOKEN.length).slice(0, -END_TOKEN.length);
+    if (truncatedNewBlock.trim().length > 0) {
+      blocks.push(truncatedNewBlock);
+
+      metadata = {
+        ...metadata,
+        locations: (metadata.locations || []).concat([index + startIndex]),
+        lengths: (metadata.lengths || []).concat([
+          newBlock.length - (
+            START_TOKEN.length + END_TOKEN.length
+          )
+        ])
+      };
     }
 
-    return request({
-        method: 'POST',
-        uri: 'https://api.github.com/gists',
-        headers: {
-            'User-Agent': 'anonymous' // required, should be github username
-        },
-        body: {
-            // "description": "the description for this gist",
-            "public": true,
-            "files": {
-                "index.js": {
-                    "content": jsGistContent
-                }
-            }
-        }, json: true
-    }).then((newGist) => {
-        console.log('SUCCESSFULLY CREATED GIST AT:', newGist.html_url);
-    }, console.error.bind(this, 'ERROR:'));
+    index = index + startIndex + endIndexFromStart;
+    startIndex = markdownContent.slice(index).indexOf(START_TOKEN);
+  }
+
+  return {
+    ...metadata,
+    locations: metadata.locations || [],
+    lengths: metadata.lengths || [],
+    blocks
+  };
 };
 
 // TODO: create REPL under certain user
-const createRepl = (jsReplContent) => {
-    if (typeof jsReplContent !== 'string' || jsReplContent.length === 0) {
-        return Promise.resolve(false);
-    }
+const createRepl = jsReplContent => {
+  if (typeof jsReplContent !== 'string' || jsReplContent.length === 0) {
+    return Promise.resolve(false);
+  }
 
-    return request({
-        method: 'POST',
-        uri: `${REPL_IT_ROOT}/data/repls/new`,
-        form: {
-            "language": "javascript",
-            "editor_text": jsReplContent,
-            "is_project": false
-        }, json: true
-    })/*.then((newRepl) => {
-        console.log('SUCCESSFULLY CREATED REPL AT:', `${REPL_IT_ROOT}${newRepl.url}`);
-        return newRepl;
-    });*/
+  return request({
+    method: 'POST',
+    uri: `${REPL_IT_ROOT}/data/repls/new`,
+    form: {
+      language: 'javascript',
+      editor_text: jsReplContent, // eslint-disable-line camelcase
+      is_project: false // eslint-disable-line camelcase
+    }, json: true
+  });
 };
 
 const extractJsCodeBlocks = (stream, file) => {
-    ((content, file) => {
+  ((content, file) => {
+    const matches = (
+      getMatchingMarkdownBlocks( // Get all code blocks
+        content,
+        START_CODE_MARKDOWN_TOKEN,
+        END_CODE_MARKDOWN_TOKEN
+      )
+    ) || [];
 
-        let blocks = getMatchingBlocks( // get all code blocks
-            md.render(content),
-            START_CODE_HTML_TOKEN,
-            END_CODE_HTML_TOKEN
-        ) || [];
+    const {blocks} = matches;
+    const parsedMarkdown = matter(content);
 
-        let parsedMarkdown = matter(content);
+    if (path.extname(file.path) === '.md' && (
+        !_.get(parsedMarkdown, 'data.custom.slugs') ||
+        !Array.isArray(_.get(parsedMarkdown, 'data.custom.slugs'))
+      )
+    ) {
+      Promise.all(
+        blocks.map(createRepl)
+      ).then(newRepls => {
+        const normalizedMetadata = _.zip(matches.locations,
+          matches.lengths,
+          matches.blocks,
+          newRepls
+        ).map(fixture => _.zipObject([
+          'location',
+          'length',
+          'block',
+          'repl'
+        ], fixture)
+        );
 
-        if (path.extname(file.path) === '.md' && (
-                !_.get(parsedMarkdown, 'data.custom.slugs') ||
-                    !_.get(parsedMarkdown, 'data.custom.slugs').length
-            )
-        ) {
-            Promise.all(
-                blocks.map(createRepl)
-            ).then((newRepls) => {
-                let replUrls = newRepls
-                    .filter(Boolean)
-                    .map(newRepl => `${REPL_IT_ROOT}${newRepl.url}`);
+        const replUrls = newRepls
+          .filter(Boolean)
+          .map(newRepl => `${REPL_IT_ROOT}${newRepl.url}`);
 
-                if (replUrls.length > 0) {
-                    let newMarkdown = Object.assign({}, parsedMarkdown);
-                    newMarkdown.data = Object.assign({}, (newMarkdown.data || {}), {
-                        custom: {
-                            repls: replUrls
-                        }
-                    });
+        if (replUrls.length > 0) {
+          const newMarkdown = Object.assign({}, parsedMarkdown);
+          newMarkdown.data = Object.assign({}, (newMarkdown.data || {}), {
+            custom: {
+              metadata: normalizedMetadata.map(meta => {
+                return {
+                  ..._.pick(meta, [
+                    'location',
+                    'length',
+                    'block',
+                    'repl.slug',
+                    'repl.url'
+                  ]),
+                  block: Buffer.from(meta.block).toString('base64')
+                };
+              })
+            }
+          });
 
-                    let newMarkdownFileContent = matter.stringify(newMarkdown.content, newMarkdown.data);
-                    let originalAbsoluteFilePath = path.resolve(file.path);
+          const newMarkdownFileContent = matter.stringify(newMarkdown.content, newMarkdown.data);
+          const originalAbsoluteFilePath = path.resolve(file.path);
 
-                    extraFs.truncateAsync(originalAbsoluteFilePath, 0).then(() => {
-                        return extraFs.writeFileAsync(originalAbsoluteFilePath, newMarkdownFileContent);
-                    }).then(() => {
-                        console.log('Done extracting code blocks for', originalAbsoluteFilePath);
-                    }, (err) => {
-                        console.error(err);
-                        process.exit(-1);
-                    });
-                }
-            });
+          extraFs.truncateAsync(originalAbsoluteFilePath, 0).then(() => {
+            return extraFs.writeFileAsync(originalAbsoluteFilePath, newMarkdownFileContent);
+          }).then(() => {
+            console.log('Done extracting code blocks for', originalAbsoluteFilePath);
+          }, err => {
+            console.error(err);
+            process.exit(-1); // eslint-disable-line unicorn/no-process-exit
+          });
         }
-    })(file.contents.toString('utf-8'), file);
+      });
+    }
+  })(file.contents.toString('utf-8'), file);
 
-    return stream; // leave the stream unchanged
+  return stream; // Leave the stream unchanged
 };
 
 gulp.task('default', () => {
-    return gulp.src('./data/blog/**/*.md')
-        .pipe($.foreach(extractJsCodeBlocks));
+  return gulp.src('./data/blog/**/*.md')
+    .pipe($.foreach(extractJsCodeBlocks));
 });
