@@ -2,8 +2,13 @@
 const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
-const _ = require('lodash');
+const R = require('ramda');
 const authors = require('../data/author.json');
+
+const isString = R.partial(R.is, String);
+const isDate = R.partial(R.is, Date);
+const isArray = R.partial(R.is, Array);
+const isBoolean = R.partial(R.is, Boolean);
 
 describe('data integrity', () => {
   describe('authors', () => {
@@ -30,13 +35,13 @@ describe('data integrity', () => {
   describe('blog posts', () => {
     const posts = fs.readdirSync('data/blog');
     const validators = [
-      {key: 'title', validator: _.isString},
-      {key: 'createdDate', validator: val => _.isDate(new Date(val))},
-      {key: 'updatedDate', validator: val => _.isDate(new Date(val))},
-      {key: 'author', validator: val => _.map(authors, 'id').includes(val)},
-      {key: 'tags', validator: _.isArray},
+      {key: 'title', validator: isString},
+      {key: 'createdDate', validator: val => isDate(new Date(val))},
+      {key: 'updatedDate', validator: val => isDate(new Date(val))},
+      {key: 'author', validator: val => R.pluck(authors, 'id').includes(val)},
+      {key: 'tags', validator: isArray},
       {key: 'image', validator: (val, post) => fs.existsSync(`data/blog/${post}/${val}`)},
-      {key: 'draft', validator: _.isBoolean}
+      {key: 'draft', validator: isBoolean}
     ];
 
     posts.forEach(post => {

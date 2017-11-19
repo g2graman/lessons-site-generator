@@ -4,7 +4,9 @@ const path = require('path');
 
 const gulp = require('gulp');
 const extraFs = require('fs-extra-promise');
-const _ = require('lodash');
+const R = require('ramda');
+const zip = require('lodash.zip');
+const pick = require('lodash.pick');
 const matter = require('gray-matter');
 const request = require('request-promise');
 const gulpLoadPlugins = require('gulp-load-plugins');
@@ -19,6 +21,12 @@ const END_CODE_MARKDOWN_TOKEN = '```';
 // END TOKENS
 
 const REPL_IT_ROOT = 'https://repl.it';
+
+const zipAllAs = (lists, keys) => zip(...lists).map(R.zipObj(keys));
+
+/* Const renameKeys = R.curry((keysMap, obj) =>
+  R.reduce((acc, key) => R.assoc(keysMap[key] || key, obj[key], acc), {}, R.keys(obj))
+); */
 
 const getNthOccurrenceIndex = (string, subString, index) => {
   return string.split(subString, index).join(subString).length;
@@ -43,7 +51,10 @@ const getMatchingMarkdownBlocks = (markdownContent, START_TOKEN, END_TOKEN) => {
       fromStartToken :
       fromStartToken.slice(0, endIndexFromStart);
 
-    const truncatedNewBlock = newBlock.slice(START_TOKEN.length).slice(0, -END_TOKEN.length);
+    const truncatedNewBlock = newBlock
+      .slice(START_TOKEN.length) // Start the block at the end of the START_TOKEN
+      .slice(0, -END_TOKEN.length); // End the block at the start of the END_TOKEN
+
     if (truncatedNewBlock.trim().length > 0) {
       blocks.push(truncatedNewBlock);
 
@@ -100,42 +111,46 @@ const extractJsCodeBlocks = (stream, file) => {
     const {blocks} = matches;
     const parsedMarkdown = matter(content);
 
+    const metadataInMarkdown = R.path(['data', 'custom', 'metadata'], parsedMarkdown);
     if (path.extname(file.path) === '.md' && (
-        !_.get(parsedMarkdown, 'data.custom.slugs') ||
-        !Array.isArray(_.get(parsedMarkdown, 'data.custom.slugs'))
+        !metadataInMarkdown ||
+        !Array.isArray(metadataInMarkdown)
       )
     ) {
       Promise.all(
         blocks.map(createRepl)
       ).then(newRepls => {
-        const normalizedMetadata = _.zip(matches.locations,
-          matches.lengths,
-          matches.blocks,
-          newRepls
-        ).map(fixture => _.zipObject([
-          'location',
-          'length',
-          'block',
-          'repl'
-        ], fixture)
-        );
-
         const replUrls = newRepls
           .filter(Boolean)
           .map(newRepl => `${REPL_IT_ROOT}${newRepl.url}`);
 
         if (replUrls.length > 0) {
+          const normalizedMetadata = zipAllAs([
+            matches.locations,
+            matches.lengths,
+            matches.blocks,
+            newRepls,
+            replUrls
+          ], [
+            'location',
+            'length',
+            'block',
+            'repl',
+            'url'
+          ]);
+
           const newMarkdown = Object.assign({}, parsedMarkdown);
           newMarkdown.data = Object.assign({}, (newMarkdown.data || {}), {
             custom: {
               metadata: normalizedMetadata.map(meta => {
                 return {
-                  ..._.pick(meta, [
+                  ...pick(meta, [
                     'location',
                     'length',
                     'block',
                     'repl.slug',
-                    'repl.url'
+                    'repl.url',
+                    'url'
                   ]),
                   block: Buffer.from(meta.block).toString('base64')
                 };
