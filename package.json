@@ -56,7 +56,6 @@
     "jest-cli": "^21.2.1",
     "lodash.pick": "^4.4.0",
     "lodash.zip": "^4.2.0",
-    "ramda": "^0.25.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-helmet": "5.0.3",
@@ -102,6 +101,7 @@
     "lint-staged": "3.4.0",
     "mkdirp": "^0.5.1",
     "plop": "^1.7.4",
+    "ramda": "^0.25.0",
     "raw-loader": "^0.5.1",
     "react-addons-test-utils": "^15.5.1",
     "react-test-renderer": "16",
@@ -113,6 +113,7 @@
     "remark-preset-lint-recommended": "^2.0.0",
     "remark-stringify": "^4.0.0",
     "request-promise": "^4.2.2",
+    "require-dir": "^0.3.2",
     "storybook-readme": "^3.0.6",
     "stylelint": "^7.10.1",
     "stylelint-config-standard": "^16.0.0",
@@ -167,6 +168,10 @@
     "*.css": [
       "stylelint"
     ]
+  },
+  "engines": {
+    "node": ">= 8",
+    "npm": " >= 5"
   },
   "xo": {
     "extends": "xo-react/space",
