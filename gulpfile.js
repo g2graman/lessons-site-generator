@@ -10,10 +10,16 @@ const $ = gulpLoadPlugins({config: packages});
 
 const taskFactories = requireDir('./tasks', {recurse: true});
 
+const dependencies = {
+  frame: ['extract']
+};
+
 R.forEach(taskFactoryName => {
   const mainTaskFactory = (taskFactories[taskFactoryName].index); // Use the index file as the source for the task
 
-  return gulp.task(taskFactoryName, mainTaskFactory(gulp, $));
+  return (taskFactoryName in dependencies) ?
+    gulp.task(taskFactoryName, dependencies[taskFactoryName], mainTaskFactory(gulp, $)) :
+    gulp.task(taskFactoryName, mainTaskFactory(gulp, $));
 }, R.keys(taskFactories));
 
 gulp.task('default', ['frame']);
