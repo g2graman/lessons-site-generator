@@ -8,5 +8,6 @@ const REPL_IT_ROOT = 'https://repl.it';
 module.exports = {
   START_CODE_MARKDOWN_TOKEN,
   END_CODE_MARKDOWN_TOKEN,
-  REPL_IT_ROOT
+  REPL_IT_ROOT,
+  MARKDOWN_METADATA_DELIMITER: '---'
 };

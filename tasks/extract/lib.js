@@ -53,9 +53,15 @@ const getMatchingMarkdownBlocks = (markdownContent, START_TOKEN, END_TOKEN) => {
     startIndex = markdownContent.slice(index).indexOf(START_TOKEN);
   }
 
+  const contentStartIndex = getNthOccurrenceIndex(
+    markdownContent,
+    CONFIG.MARKDOWN_METADATA_DELIMITER,
+    2
+  ) + CONFIG.MARKDOWN_METADATA_DELIMITER.length;
+
   return {
     ...metadata,
-    locations: metadata.locations || [],
+    locations: (metadata.locations || []).map(location => location - contentStartIndex),
     lengths: metadata.lengths || [],
     blocks
   };
