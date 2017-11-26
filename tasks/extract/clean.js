@@ -2,11 +2,15 @@
 
 const path = require('path');
 
-const extraFs = require('fs-extra-promise');
+// Const extraFs = require('fs-extra-promise');
+const through = require('through2');
+const transform = require('vinyl-transform');
 const R = require('ramda');
 const matter = require('gray-matter');
 
-const cleasnMarkdownMetadata = (content, file) => {
+const enableExtraFeatures = /e?x(tras)?/i.test(process.env.NODE_ENV);
+
+const cleanMarkdownMetadata = (content, file) => {
   const parsedMarkdown = matter(content);
 
   const metadataInMarkdown = R.path(['data', 'custom', 'metadata'], parsedMarkdown);
@@ -21,6 +25,10 @@ const cleasnMarkdownMetadata = (content, file) => {
     };
 
     const newMarkdownFileContent = matter.stringify(newMarkdown.content, newMarkdown.data, {});
+    console.log(newMarkdownFileContent);
+
+    // TODO: modify below
+    /* process.exit(0);
 
     const originalAbsoluteFilePath = path.resolve(file.path);
 
@@ -31,18 +39,50 @@ const cleasnMarkdownMetadata = (content, file) => {
     }, err => {
       console.error(err);
       process.exit(-1); // eslint-disable-line unicorn/no-process-exit
-    });
+    }); */
   }
 };
 
-const cleasnMarkdownMetadataForFile = (stream, file) => {
-  cleasnMarkdownMetadata(file.contents.toString('utf-8'), file);
+const getModifiedFiles = $ => transform(filename => {
+  return through(function (file, encoding, done) {
+    return $.git.status({args: '-s', quiet: true}, (err, stdout) => {
+      if (err) {
+        throw err;
+      }
+
+      const modifiedFiles = stdout.split('\n')
+        .filter(Boolean)
+        .map(s => s.trim())
+        .filter(line => line.startsWith('M'))
+        .map(line => line.slice(2))
+        .map(filePath => path.resolve('./', filePath));
+
+      if (modifiedFiles.indexOf(filename) > -1) {
+        this.push(file);
+      }
+
+      return done();
+    });
+  });
+});
+
+const ignoreEmptyFiles = $ => {
+  return $.ignore.include(file => {
+    return Boolean(file.contents.toString().length);
+  });
+};
+
+const cleanMarkdownMetadataForFile = (stream, file) => {
+  cleanMarkdownMetadata(file.contents.toString('utf-8'), file);
   return stream; // Leave the stream unchanged, in case of a pipe following this
 };
 
 module.exports = function (gulp, $) {
   return function () {
     return gulp.src('./data/blog/**/*.md')
-      .pipe($.foreach(cleasnMarkdownMetadataForFile));
+      .pipe($.if(enableExtraFeatures, getModifiedFiles($)))
+      .pipe($.if(enableExtraFeatures, ignoreEmptyFiles($)))
+      .pipe($.debug())
+      .pipe($.foreach(cleanMarkdownMetadataForFile));
   };
 };
