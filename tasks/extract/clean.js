@@ -8,7 +8,7 @@ const transform = require('vinyl-transform');
 const R = require('ramda');
 const matter = require('gray-matter');
 
-const enableExtraFeatures = /e?x(tras)?/i.test(process.env.NODE_ENV);
+const getOptions = require('../options');
 
 const cleanMarkdownMetadata = (content, file) => {
   const parsedMarkdown = matter(content);
@@ -19,13 +19,13 @@ const cleanMarkdownMetadata = (content, file) => {
       !Array.isArray(metadataInMarkdown)
     )
   ) {
-    const newMarkdown = {
+    /* Const newMarkdown = {
       ...parsedMarkdown,
       data: R.omit(['custom'], (parsedMarkdown.data || {}))
-    };
+    }; */
 
-    const newMarkdownFileContent = matter.stringify(newMarkdown.content, newMarkdown.data, {});
-    console.log(newMarkdownFileContent);
+    // const newMarkdownFileContent = matter.stringify(newMarkdown.content, newMarkdown.data, {});
+    // Console.log(newMarkdownFileContent);
 
     // TODO: modify below
     /* process.exit(0);
@@ -40,6 +40,7 @@ const cleanMarkdownMetadata = (content, file) => {
       console.error(err);
       process.exit(-1); // eslint-disable-line unicorn/no-process-exit
     }); */
+
   }
 };
 
@@ -79,9 +80,11 @@ const cleanMarkdownMetadataForFile = (stream, file) => {
 
 module.exports = function (gulp, $) {
   return function () {
+    const options = getOptions($);
+
     return gulp.src('./data/blog/**/*.md')
-      .pipe($.if(enableExtraFeatures, getModifiedFiles($)))
-      .pipe($.if(enableExtraFeatures, ignoreEmptyFiles($)))
+      .pipe($.if(options.c, getModifiedFiles($)))
+      .pipe($.if(options.c, ignoreEmptyFiles($)))
       .pipe($.debug())
       .pipe($.foreach(cleanMarkdownMetadataForFile));
   };

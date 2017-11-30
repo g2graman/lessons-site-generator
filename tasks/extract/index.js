@@ -6,12 +6,15 @@ const extraFs = require('fs-extra-promise');
 const R = require('ramda');
 const pick = require('lodash.pick');
 const matter = require('gray-matter');
+const through = require('through2');
+const Vinyl = require('vinyl');
 
+const getOptions = require('../options');
 const CONFIG = require('./config');
 const extractLib = require('./lib');
 
 // TODO: modularize / clean this up
-const extractJsCodeBlocks = (content, file) => {
+const extractJsCodeBlocks = (content, file, options) => {
   const matches = (
     extractLib.getMatchingMarkdownBlocks( // Get all code blocks
       content,
@@ -24,12 +27,13 @@ const extractJsCodeBlocks = (content, file) => {
   const parsedMarkdown = matter(content);
 
   const metadataInMarkdown = R.path(['data', 'custom', 'metadata'], parsedMarkdown);
+
   if (path.extname(file.path) === '.md' && (
       !metadataInMarkdown ||
       !Array.isArray(metadataInMarkdown)
     )
   ) {
-    Promise.all(
+    return Promise.all(
       blocks.map(extractLib.createRepl)
     ).then(newRepls => {
       const replUrls = newRepls
@@ -75,27 +79,58 @@ const extractJsCodeBlocks = (content, file) => {
 
         const originalAbsoluteFilePath = path.resolve(file.path);
 
-        extraFs.truncateAsync(originalAbsoluteFilePath, 0).then(() => {
-          return extraFs.writeFileAsync(originalAbsoluteFilePath, newMarkdownFileContent);
-        }).then(() => {
-          console.log('Done extracting code blocks for', originalAbsoluteFilePath);
+        let nextPromise = null;
+        if (options.d) {
+          nextPromise = Promise.resolve(''); // Skip writing to the markdown file
+        }
+
+        nextPromise = nextPromise || (
+          extraFs.truncateAsync(originalAbsoluteFilePath, 0).then(() => {
+            return extraFs.writeFileAsync(originalAbsoluteFilePath, newMarkdownFileContent);
+          })
+        );
+
+        return nextPromise.then(() => {
+          // Console.log('Done extracting code blocks for', originalAbsoluteFilePath);
+          // process.stdout.write(newMarkdownFileContent);
+          return newMarkdownFileContent;
         }, err => {
           console.error(err);
           process.exit(-1); // eslint-disable-line unicorn/no-process-exit
         });
       }
+    })
+    .catch(err => {
+      console.error(err);
+      process.exit(-1); // eslint-disable-line unicorn/no-process-exit
     });
   }
 };
 
-const extractJsCodeBlocksForFile = (stream, file) => {
-  extractJsCodeBlocks(file.contents.toString('utf-8'), file);
-  return stream; // Leave the stream unchanged, in case of a pipe following this
+const extractJsCodeBlocksForFile = (file, options) => {
+  return extractJsCodeBlocks(file.contents.toString('utf-8'), file, options);
 };
 
 module.exports = function (gulp, $) {
   return function () {
-    return gulp.src('./data/blog/**/*.md')
-      .pipe($.foreach(extractJsCodeBlocksForFile));
+    const options = getOptions($);
+
+    return gulp.src(['./data/blog/**/*.md'])
+      .pipe(through.obj((file, enc, cb) => {
+        return extractJsCodeBlocksForFile(file, options)
+          .then(newContent => {
+            if (typeof newContent === 'undefined') {
+              return cb(null, null);
+            }
+
+            return cb(
+              null,
+              new Vinyl({
+                ...R.pick(['cwd', 'base', 'path'], file),
+                contents: Buffer.from(newContent)
+              })
+            );
+          }).catch(console.error);
+      }));
   };
 };

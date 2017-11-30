@@ -3,8 +3,12 @@
 const matter = require('gray-matter');
 const R = require('ramda');
 const entities = require('entities');
+const through = require('through2');
+const Vinyl = require('vinyl');
 
 const CONFIG = require('../extract/config');
+const getOptions = require('../options');
+const extractTask = require('../extract');
 
 const IFRAME_WIDTH = 600;
 const IFRAME_HEIGHT = 400;
@@ -66,21 +70,40 @@ const metadataReducer = (file, originalContent, markdownMetadata, parsedMarkdown
   });
 };
 
+const frameJsCodeBlocksForFile = file => {
+  const originalContent = file.contents.toString('utf-8');
+  const parsedMarkdown = matter(originalContent);
+
+  const markdownMetadata = R.path(['data', 'custom', 'metadata'], parsedMarkdown);
+
+  if (markdownMetadata) {
+    const results = metadataReducer(file, originalContent, markdownMetadata, parsedMarkdown);
+    return matter.stringify(results.content, parsedMarkdown.data, {});
+  }
+};
+
 module.exports = function (gulp, $) {
+  const options = getOptions($);
+
   return function () {
-    return gulp.src('./data/blog/**/*.md')
-      .pipe($.foreach((stream, file) => {
-        const originalContent = file.contents.toString('utf-8');
-        const parsedMarkdown = matter(originalContent);
+    const source = options.d ?
+      extractTask(gulp, $)() :
+      gulp.src('./data/blog/**/*.md');
 
-        const markdownMetadata = R.path(['data', 'custom', 'metadata'], parsedMarkdown);
-
-        if (markdownMetadata) {
-          const results = metadataReducer(file, originalContent, markdownMetadata, parsedMarkdown);
-          console.log(matter.stringify(results.content, parsedMarkdown.data, {}));
+    return source
+      .pipe(through.obj((file, enc, cb) => {
+        const newContent = frameJsCodeBlocksForFile(file, options);
+        if (typeof newContent === 'undefined') {
+          return cb(null, null);
         }
 
-        return stream;
+        return cb(
+          null,
+          new Vinyl({
+            ...R.pick(['cwd', 'base', 'path'], file),
+            contents: Buffer.from(newContent)
+          })
+        );
       }));
   };
 };
