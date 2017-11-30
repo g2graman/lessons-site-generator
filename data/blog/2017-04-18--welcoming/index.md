@@ -1,22 +1,13 @@
 ---
 title: Welcoming
 createdDate: '2017-04-18'
-updatedDate: '2017-11-18'
+updatedDate: '2017-11-30'
 author: Fabien BERNARD
 tags:
   - starter
   - gatsby
 image: pexels-photo-253092.jpeg
 draft: false
-custom:
-  metadata:
-    - location: 3196
-      length: 82
-      block: >-
-        CmNvbnN0IHBsb3AgPSAiY291Y291IjsKY29uc3QgdG90byA9ICJ0YXRhIjsKCmNvbnNvbGUubG9nKCdTb21lIHJhbmRvbSBtZXNzYWdlJyk7Cg==
-      repl:
-        slug: WeirdQuietFox
-        url: /repls/WeirdQuietFox
 ---
 
 Welcome to gatsby-starter!
@@ -39,3 +30,10 @@ console.log('Some random message');
 ```
 
 coucou `plop` comment tu vas ?
+
+```javascript
+const plop = "coucou";
+const toto = "tata";
+
+console.log('Some random message');
+```
