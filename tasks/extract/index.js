@@ -2,7 +2,6 @@
 
 const path = require('path');
 
-const extraFs = require('fs-extra-promise');
 const R = require('ramda');
 const pick = require('lodash.pick');
 const matter = require('gray-matter');
@@ -53,26 +52,6 @@ const zipMetadata = (metadataMatchingBlock, newRepls, replUrls) => {
   ]);
 };
 
-const handleDryRunMode = (originalAbsoluteFilePath, newMarkdownFileContent, options) => {
-  let nextPromise = null;
-  if (options.d) {
-    nextPromise = Promise.resolve(''); // Skip writing to the markdown file
-  }
-
-  nextPromise = nextPromise || (
-    extraFs.truncateAsync(originalAbsoluteFilePath, 0).then(() => {
-      return extraFs.writeFileAsync(originalAbsoluteFilePath, newMarkdownFileContent);
-    })
-  );
-
-  return nextPromise.then(() => {
-    return newMarkdownFileContent;
-  }, err => {
-    console.error(err);
-    process.exit(-1); // eslint-disable-line unicorn/no-process-exit
-  });
-};
-
 const getReplUrlsFromSlugs = replSlugs => {
   return replSlugs
     .filter(Boolean)
@@ -120,7 +99,7 @@ const extractJsCodeBlocks = (content, file, options) => {
           .replace(/\s+$/, '');
 
         const originalAbsoluteFilePath = path.resolve(file.path);
-        return handleDryRunMode(originalAbsoluteFilePath, newMarkdownFileContent, options);
+        return extractLib.handleDryRunMode(originalAbsoluteFilePath, newMarkdownFileContent, options);
       }
 
       return undefined; // No repls, skip file

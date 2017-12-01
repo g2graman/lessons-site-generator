@@ -3,6 +3,7 @@
 const R = require('ramda');
 const zip = require('lodash.zip');
 const request = require('request-promise');
+const extraFs = require('fs-extra-promise');
 
 const CONFIG = require('./config');
 
@@ -84,9 +85,30 @@ const createRepl = jsReplContent => {
   });
 };
 
+const handleDryRunMode = (originalAbsoluteFilePath, newMarkdownFileContent, options) => {
+  let nextPromise = null;
+  if (options.d) {
+    nextPromise = Promise.resolve(''); // Skip writing to the markdown file
+  }
+
+  nextPromise = nextPromise || (
+    extraFs.truncateAsync(originalAbsoluteFilePath, 0).then(() => {
+      return extraFs.writeFileAsync(originalAbsoluteFilePath, newMarkdownFileContent);
+    })
+  );
+
+  return nextPromise.then(() => {
+    return newMarkdownFileContent;
+  }, err => {
+    console.error(err);
+    process.exit(-1); // eslint-disable-line unicorn/no-process-exit
+  });
+};
+
 module.exports = {
   getNthOccurrenceIndex,
   zipAllAs,
   getMatchingMarkdownBlocks,
-  createRepl
+  createRepl,
+  handleDryRunMode
 };
