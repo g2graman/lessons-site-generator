@@ -1,5 +1,7 @@
+const LANGUAGE = 'javascript';
+
 // START TOKENS
-const START_CODE_MARKDOWN_TOKEN = '```javascript';
+const START_CODE_MARKDOWN_TOKEN = `\`\`\`${LANGUAGE}`;
 const END_CODE_MARKDOWN_TOKEN = '```';
 // END TOKENS
 
