@@ -21,10 +21,13 @@ interface IndexPageProps {
   };
 }
 
-@PageDecorators.setPageMetadata({
+const LINK = "/";
+const NAME = "Home";
+
+/*@PageDecorators.setPageMetadata({
     LINK: '/home',
     NAME: 'Home'
-})
+})*/
 export default class IndexPageComponent extends React.Component {
     props: IndexPageProps;
     constructor(props: IndexPageProps) {
@@ -129,4 +132,7 @@ export default class IndexPageComponent extends React.Component {
     }
 }
 
-console.log(IndexPageComponent);
+export {
+  LINK,
+  NAME,
+};

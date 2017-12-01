@@ -4,7 +4,9 @@ import HeaderMenu from "../components/HeaderMenu/HeaderMenu";
 import SidebarMenu from "../components/SidebarMenu/SidebarMenu";
 import { Segment, Icon, Container, Sidebar } from "semantic-ui-react";
 
-import {LINK as WORKSHOP_LINK} from '../pages/workshop';
+import {LINK as WORKSHOP_LINK, NAME as WORKSHOP_NAME} from "../pages/workshop";
+import {LINK as ABOUT_LINK, NAME as ABOUT_NAME} from "../pages/about";
+import {LINK as HOME_LINK, NAME as HOME_NAME} from "../pages/about";
 
 import "../css/styles.css";
 import "../css/responsive.css";
@@ -12,9 +14,9 @@ import "../css/semantic.min.css";
 import "prismjs/themes/prism-okaidia.css";
 
 export const menuItems = [
-  { name: "Home", path: `/`, exact: true, icon: "home", inverted: true },
-  { name: "About", path: `/about/`, exact: true, icon: "info circle" },
-  { name: "Workshop", path: `/${WORKSHOP_LINK}/`, exact: false, icon: "newspaper" },
+  { name: HOME_NAME, path: HOME_LINK, exact: true, icon: "home", inverted: true },
+  { name: ABOUT_NAME, path: ABOUT_LINK, exact: true, icon: "info circle" },
+  { name: WORKSHOP_NAME, path: WORKSHOP_LINK, exact: false, icon: "newspaper" },
 ];
 
 interface DefaultLayoutProps extends React.HTMLProps<HTMLDivElement> {

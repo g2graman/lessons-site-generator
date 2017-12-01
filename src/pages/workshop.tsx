@@ -6,9 +6,8 @@ import BlogTitle from "../components/WorkshopTitle";
 import TagsCard from "../components/TagsCard/TagsCard";
 import WorkshopPagination from "../components/WorkshopPagination/WorkshopPagination";
 
-const LINK = 'workshop';
-const NAME = 'Workshop';
-
+const LINK = "/workshop/";
+const NAME = "Workshop";
 
 interface WorkshopProps {
   data: {
@@ -164,5 +163,5 @@ query PageBlog {
 
 export {
   LINK,
-  NAME
+  NAME,
 };

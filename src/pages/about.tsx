@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Header, Container, Segment, Icon } from "semantic-ui-react";
 
-const LINK = '/about';
+const LINK = "/about/";
+const NAME = "About";
 
 export default () => {
   return (
@@ -30,4 +31,7 @@ export default () => {
   );
 };
 
-export { LINK };
+export {
+  LINK,
+  NAME,
+};
