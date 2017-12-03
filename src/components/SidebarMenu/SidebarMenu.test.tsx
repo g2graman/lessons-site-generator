@@ -9,7 +9,7 @@ configure({ adapter: new Adapter() });
 
 const items = [
   { name: "Home", path: "/", exact: true },
-  { name: "About", path: "/about/", exact: true },
+  { name: "About", path: "/about/", exact: false },
   { name: "Blog", path: "/blog/", exact: false },
 ];
 

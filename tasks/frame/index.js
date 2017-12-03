@@ -2,7 +2,7 @@
 
 const matter = require('gray-matter');
 const R = require('ramda');
-const entities = require('entities');
+// Const entities = require('entities');
 const through = require('through2');
 const Vinyl = require('vinyl');
 const Mustache = require('mustache');
@@ -12,11 +12,22 @@ const getOptions = require('../options');
 const extractTask = require('../extract');
 const extractLib = require('../extract/lib');
 
-const IFRAME_WIDTH = 600;
-const IFRAME_HEIGHT = 400;
+const IFRAME_HEIGHT = 650;
 
-const makeIFrame = (url, width = IFRAME_WIDTH, height = IFRAME_HEIGHT) => {
-  return entities.encodeHTML(`<iframe url="${url} width="${width}" height="${height}"></iframe>`);
+const makeIFrame = (url, height = IFRAME_HEIGHT) => {
+  return `<iframe height="${height}"
+    width="100%"
+    src="${url}?lite=true"
+    scrolling="no"
+    frameborder="no"
+    allowtransparency="true"
+    allowfullscreen="true"
+    sandbox="allow-forms
+    allow-pointer-lock
+    allow-popups
+    allow-same-origin
+    allow-scripts
+    allow-modals"></iframe>`;
 };
 
 const metadataReducer = (file, originalContent, markdownMetadata) => {
@@ -59,7 +70,7 @@ const metadataReducer = (file, originalContent, markdownMetadata) => {
       };
     }, {
       matchCount: 0,
-      content: contentAfterMetadata
+      content: ''
     });
 };
 

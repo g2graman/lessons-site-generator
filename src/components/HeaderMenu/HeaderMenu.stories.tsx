@@ -8,12 +8,14 @@ import { action } from "@storybook/addon-actions";
 import { withKnobs, text, boolean } from "@storybook/addon-knobs";
 import { HeaderMenu } from "./HeaderMenu";
 
-import { LINK AS WORKSHOP_LINK } from "../../pages/workshop";
+import {LINK as WORKSHOP_LINK, NAME as WORKSHOP_NAME} from "../../pages/workshop";
+import {LINK as ABOUT_LINK, NAME as ABOUT_NAME} from "../../pages/about";
+import {LINK as HOME_LINK, NAME as HOME_NAME} from "../../pages/index";
 
 const items = [
-  { name: "Home", path: "/", exact: true },
-  { name: "About", path: "/about/", exact: true },
-  { name: "Workshop", path: `/${WORKSHOP_LINK}/`, exact: false },
+  { name: HOME_NAME, path: HOME_LINK, exact: true },
+  { name: ABOUT_NAME, path: ABOUT_LINK, exact: false },
+  { name: WORKSHOP_NAME, path: WORKSHOP_LINK, exact: false },
 ];
 
 const LinkStub = (props: any) =>
