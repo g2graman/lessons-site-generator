@@ -1,6 +1,7 @@
 const path = require('path');
 const slash = require('slash');
 const {kebabCase, uniq, get, compact, times} = require('lodash');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 // Don't forget to update hard code values into:
 // - `templates/blog-page.tsx:23`
@@ -106,4 +107,21 @@ exports.createPages = ({graphql, boundActionCreators}) => {
       resolve();
     });
   });
+};
+
+exports.modifyWebpackConfig = ({config, stage}) => {
+  switch (stage) {
+    case 'develop':
+      config.plugin(
+              'CircularDependencyPlugin',
+              () => new CircularDependencyPlugin({
+                exclude: /node_modules/,
+                failOnError: true
+              })
+          );
+
+      break;
+  }
+
+  return config;
 };
