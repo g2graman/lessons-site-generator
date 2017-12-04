@@ -4,7 +4,7 @@ import HeaderMenu from "../components/HeaderMenu/HeaderMenu";
 import SidebarMenu from "../components/SidebarMenu/SidebarMenu";
 import { Segment, Icon, Container, Sidebar } from "semantic-ui-react";
 
-import {LINK as WORKSHOP_LINK, NAME as WORKSHOP_NAME} from "../pages/workshop";
+import {LINK as WORKSHOP_LINK, NAME as WORKSHOP_NAME} from "../pages/workshop/workshop-metadata.const";
 import {LINK as ABOUT_LINK, NAME as ABOUT_NAME} from "../pages/about";
 
 import "../css/styles.css";

@@ -1,7 +1,7 @@
 import * as React from "react";
-import Blog from "../pages/workshop";
+import Workshop from "../pages/workshop/workshop";
 
-export default Blog;
+export default Workshop;
 
 export const pageQuery = graphql`
 query TemplateBlogPage($skip: Int) {

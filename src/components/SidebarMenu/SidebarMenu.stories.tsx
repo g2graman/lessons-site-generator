@@ -8,7 +8,7 @@ import { action } from "@storybook/addon-actions";
 import { withKnobs, text, boolean } from "@storybook/addon-knobs";
 import { SidebarMenu } from "./SidebarMenu";
 
-import {LINK as WORKSHOP_LINK, NAME as WORKSHOP_NAME} from "../../pages/workshop";
+import {LINK as WORKSHOP_LINK, NAME as WORKSHOP_NAME} from "../../pages/workshop/workshop-metadata.const";
 import {LINK as ABOUT_LINK, NAME as ABOUT_NAME} from "../../pages/about";
 import {LINK as HOME_LINK, NAME as HOME_NAME} from "../../pages/index";
 

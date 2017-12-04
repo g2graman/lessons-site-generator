@@ -1,26 +1,15 @@
 import * as React from "react";
 import Link from "gatsby-link";
 import { Grid, Card, Container, Segment, Comment } from "semantic-ui-react";
-import { MarkdownRemarkConnection, ImageSharp } from "../graphql-types";
-import BlogTitle from "../components/WorkshopTitle";
-import TagsCard from "../components/TagsCard/TagsCard";
-import WorkshopPagination from "../components/WorkshopPagination/WorkshopPagination";
+import {ImageSharp } from "../../graphql-types";
+import BlogTitle from "../../components/WorkshopTitle";
+import TagsCard from "../../components/TagsCard/TagsCard";
+import WorkshopPagination from "../../components/WorkshopPagination/WorkshopPagination";
 
-const LINK = "/workshop/";
-const NAME = "Workshop";
+import { WorkshopProps } from "./workshop-props.interface";
+import { QUERY } from "./workshop-query";
 
-interface WorkshopProps {
-  data: {
-    tags: MarkdownRemarkConnection;
-    posts: MarkdownRemarkConnection;
-  };
-  pathContext: {
-    tag?: string; // only set into `templates/tags-pages.tsx`
-  };
-  location: {
-    pathname: string;
-  };
-}
+export const pageQuery = QUERY;
 
 export default (props: WorkshopProps) => {
   const tags = props.data.tags.group;
@@ -100,68 +89,4 @@ export default (props: WorkshopProps) => {
       </Segment>
     </Container>
   );
-};
-
-export const pageQuery = graphql`
-query PageBlog {
-  # Get tags
-  tags: allMarkdownRemark(filter: {frontmatter: {draft: {ne: true}}}) {
-    group(field: frontmatter___tags) {
-      fieldValue
-      totalCount
-    }
-  }
-
-  # Get posts
-  posts: allMarkdownRemark(
-    sort: { order: DESC, fields: [frontmatter___updatedDate] },
-    filter: {
-      frontmatter: { draft: { ne: true } },
-      fileAbsolutePath: { regex: "/blog/" }
-    },
-    limit: 10
-  ) {
-    totalCount
-    edges {
-      node {
-        excerpt
-        timeToRead
-        fields {
-          slug
-        }
-        frontmatter {
-          title
-          updatedDate(formatString: "DD MMMM, YYYY")
-          image {
-          	children {
-              ... on ImageSharp {
-                responsiveResolution(width: 700, height: 100) {
-                  src
-                  srcSet
-                }
-              }
-            }
-          }
-          author {
-            id
-            avatar {
-              children {
-                ... on ImageSharp {
-                  responsiveResolution(width: 35, height: 35) {
-                    src
-                    srcSet
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}`;
-
-export {
-  LINK,
-  NAME,
 };

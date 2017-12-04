@@ -7,7 +7,7 @@ import { storiesOf } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import { withKnobs, number } from "@storybook/addon-knobs";
 import WorkshopPagination from "./WorkshopPagination";
-import { LINK as WORKSHOP_LINK } from "../../pages/workshop";
+import { LINK as WORKSHOP_LINK } from "../../pages/workshop/workshop-metadata.const";
 
 const LinkStub = ((props: any) =>
   <div {...props} onClick={action(props.to.toString())} >{props.children}</div>) as any;

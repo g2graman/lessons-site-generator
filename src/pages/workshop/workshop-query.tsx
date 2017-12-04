@@ -1,10 +1,5 @@
-import * as React from "react";
-import Workshop from "../pages/workshop/workshop";
-
-export default Workshop;
-
-export const pageQuery = graphql`
-query TemplateTagPage($tag: String) {
+export const QUERY = graphql`
+query PageBlog {
   # Get tags
   tags: allMarkdownRemark(filter: {frontmatter: {draft: {ne: true}}}) {
     group(field: frontmatter___tags) {
@@ -17,12 +12,10 @@ query TemplateTagPage($tag: String) {
   posts: allMarkdownRemark(
     sort: { order: DESC, fields: [frontmatter___updatedDate] },
     filter: {
-      frontmatter: {
-        draft: { ne: true }
-        tags: { in: [$tag] }
-      },
+      frontmatter: { draft: { ne: true } },
       fileAbsolutePath: { regex: "/blog/" }
-    }
+    },
+    limit: 10
   ) {
     totalCount
     edges {
@@ -62,5 +55,4 @@ query TemplateTagPage($tag: String) {
       }
     }
   }
-}
-`;
+}`;

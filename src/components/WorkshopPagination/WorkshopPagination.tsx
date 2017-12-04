@@ -3,7 +3,10 @@ import { GatsbyLinkProps } from "gatsby-link";
 import { Menu } from "semantic-ui-react";
 import { times } from "lodash";
 
-import { LINK as WORKSHOP_LINK } from "../../pages/workshop";
+import {
+  LINK as WORKSHOP_LINK,
+  PATH as WORKSHOP_PATH,
+} from "../../pages/workshop/workshop-metadata.const";
 
 interface WorkshopPaginationProps extends React.HTMLProps<HTMLDivElement> {
   pathname: string;
@@ -13,36 +16,38 @@ interface WorkshopPaginationProps extends React.HTMLProps<HTMLDivElement> {
 
 export default (props: WorkshopPaginationProps) => {
   if (props.pageCount === 1) { return null; }
-  const activeItem = props.pathname.startsWith(`/${WORKSHOP_LINK}/page/`)
+  const activeItem = props.pathname.startsWith(`${WORKSHOP_PATH}/page/`)
     ? props.pathname.split("/")[3]
     : "1";
 
   return (
     <Menu pagination>
-      {times(props.pageCount, (index) => {
-        const pageIndex = (index + 1).toString();
+      {
+        times(props.pageCount, (index: number) => {
+          const pageIndex = (index + 1).toString();
 
-        const rangeStep = props.pageCount < 10 ? 5 : 3;
-        const isInRange = (+pageIndex - rangeStep < +activeItem && +pageIndex + rangeStep > +activeItem);
-        const isLastPage = (+pageIndex === props.pageCount);
-        const isFirstPage = (+pageIndex === 1);
-        if (isInRange || isFirstPage || isLastPage) {
-          return (
-            <Menu.Item
-              key={pageIndex}
-              style={{ cursor: "pointer" }}
-              as={props.Link}
-              to={`/${WORKSHOP_LINK}/page/${pageIndex}/`}
-              name={pageIndex}
-              active={activeItem === pageIndex}
-            />
-          );
-        } else {
-          return (+pageIndex === props.pageCount - 1 || +pageIndex === 2)
-            ? <Menu.Item key={pageIndex} disabled>...</Menu.Item>
-            : null;
-        }
-      })}
+          const rangeStep = props.pageCount < 10 ? 5 : 3;
+          const isInRange = (+pageIndex - rangeStep < +activeItem && +pageIndex + rangeStep > +activeItem);
+          const isLastPage = (+pageIndex === props.pageCount);
+          const isFirstPage = (+pageIndex === 1);
+          if (isInRange || isFirstPage || isLastPage) {
+            return (
+              <Menu.Item
+                key={pageIndex}
+                style={{ cursor: "pointer" }}
+                as={props.Link}
+                to={`${WORKSHOP_LINK}page/${pageIndex}/`}
+                name={pageIndex}
+                active={activeItem === pageIndex}
+              />
+            );
+          } else {
+            return (+pageIndex === props.pageCount - 1 || +pageIndex === 2)
+              ? <Menu.Item key={pageIndex} disabled>...</Menu.Item>
+              : null;
+          }
+        })
+      }
     </Menu>
   );
 };

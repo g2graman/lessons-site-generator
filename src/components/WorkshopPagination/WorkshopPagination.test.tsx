@@ -2,7 +2,7 @@ import { render, configure } from "enzyme";
 import "jest";
 import * as React from "react";
 import WorkshopPagination from "./WorkshopPagination";
-import { LINK as WORKSHOP_LINK } from "../../pages/workshop";
+import { LINK as WORKSHOP_LINK } from "../../pages/workshop/workshop-metadata.const";
 
 // Configure enzyme with react 16 adapter
 const Adapter: any = require("enzyme-adapter-react-16");
