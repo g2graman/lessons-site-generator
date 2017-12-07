@@ -35,7 +35,7 @@ describe("HeaderMenu component", () => {
     expect(wrapper.find({ name: "About" }).prop("active")).toBeTruthy();
   });
 
-  it("should have blog as active (match not exact)", () => {
+  it("should have workshop as active (match not exact)", () => {
     const wrapper = shallow(
       <HeaderMenu
         Link={LinkStub}

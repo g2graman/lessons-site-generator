@@ -4,14 +4,14 @@ const {kebabCase, uniq, get, compact, times} = require('lodash');
 const webpackCustomizations = require('./webpack.config');
 
 // Don't forget to update hard code values into:
-// - `templates/blog-page.tsx:23`
+// - `templates/workshop-page.tsx:23`
 // - `pages/workshop.tsx:26`
 // - `pages/workshop.tsx:121`
 const POSTS_PER_PAGE = 10;
 const cleanArray = arr => compact(uniq(arr));
 
 // Create slugs for files.
-// Slug will used for blog page path.
+// Slug will used for workshop page path.
 exports.onCreateNode = ({node, boundActionCreators, getNode}) => {
   const {createNodeField} = boundActionCreators;
   let slug;
@@ -64,9 +64,9 @@ exports.createPages = ({graphql, boundActionCreators}) => {
       }
       const posts = result.data.posts.edges.map(p => p.node);
 
-      // Create blog pages
+      // Create workshop pages
       posts
-        .filter(post => post.fields.slug.startsWith('/blog/'))
+        .filter(post => post.fields.slug.startsWith('/workshop/'))
         .forEach(post => {
           createPage({
             path: post.fields.slug,
@@ -84,7 +84,7 @@ exports.createPages = ({graphql, boundActionCreators}) => {
         , [])
         .forEach(tag => {
           createPage({
-            path: `/blog/tags/${kebabCase(tag)}/`,
+            path: `/workshop/tags/${kebabCase(tag)}/`,
             component: slash(templates.tagsPage),
             context: {
               tag
@@ -92,11 +92,11 @@ exports.createPages = ({graphql, boundActionCreators}) => {
           });
         });
 
-      // Create blog pagination
+      // Create workshop pagination
       const pageCount = Math.ceil(posts.length / POSTS_PER_PAGE);
       times(pageCount, index => {
         createPage({
-          path: `/blog/page/${index + 1}/`,
+          path: `/workshop/page/${index + 1}/`,
           component: slash(templates.blogPage),
           context: {
             skip: index * POSTS_PER_PAGE

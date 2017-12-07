@@ -16,7 +16,7 @@ export default (props: BlogPostProps) => {
   const avatar = frontmatter.author.avatar.children[0] as ImageSharp;
 
   const tags = props.data.post.frontmatter.tags
-    .map((tag) => <Label key={tag}><Link to={`/blog/tags/${tag}/`}>{tag}</Link></Label>);
+    .map((tag) => <Label key={tag}><Link to={`/workshop/tags/${tag}/`}>{tag}</Link></Label>);
 
   const recents = props.data.recents.edges
     .map(({ node }) => {
@@ -143,7 +143,7 @@ export const pageQuery = graphql`
     filter: {
       fields: {slug: {ne: $slug}}
       frontmatter: {draft: {ne: true}},
-      fileAbsolutePath: {regex: "/blog/"},
+      fileAbsolutePath: {regex: "/workshop/"},
     },
     sort: {order: DESC, fields: [frontmatter___updatedDate]},
     limit: 4

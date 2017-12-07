@@ -1,5 +1,5 @@
 import * as React from "react";
-import Workshop from "../pages/workshop/workshop";
+import Workshop from "../pages/workshop";
 
 export default Workshop;
 
@@ -20,7 +20,7 @@ query TemplateBlogPage($skip: Int) {
       frontmatter: {
         draft: { ne: true }
       },
-      fileAbsolutePath: { regex: "/blog/" }
+      fileAbsolutePath: { regex: "/workshop/" }
     }
     limit: 10,
     skip: $skip

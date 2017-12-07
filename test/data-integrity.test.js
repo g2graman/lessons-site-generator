@@ -32,8 +32,8 @@ describe('data integrity', () => {
     });
   });
 
-  describe('blog posts', () => {
-    const posts = fs.readdirSync('data/blog');
+  describe('workshop posts', () => {
+    const posts = fs.readdirSync('data/workshop');
     const validators = [
       {key: 'title', validator: isString},
       {key: 'createdDate', validator: val => isDate(new Date(val))},

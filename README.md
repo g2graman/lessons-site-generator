@@ -62,7 +62,7 @@ Run `yarn build` to create static site ready to host (`/public`)
      ├── gatsby-config.js              // gatsby configuration
      ├── gatsby-node.js                // gatsby node hooks
      ├── generators                    // generators (`yarn generate`)
-     │   ├── blog-post-generator.js    // `blog post` generator
+     │   ├── workshop-post-generator.js    // `blog post` generator
      │   ├── component-generator.js    // `component` generator
      │   ├── page-generator.js         // `page` generator
      │   ├── plopfile.js               // generators entry

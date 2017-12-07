@@ -100,7 +100,7 @@ module.exports = function (gulp, $) {
   return function () {
     const source = options.d ?
       extractTask(gulp, $)() :
-      gulp.src('./data/blog/**/*.md');
+      gulp.src('./data/workshop/**/*.md');
 
     return source
       .pipe(through.obj((file, enc, cb) => {

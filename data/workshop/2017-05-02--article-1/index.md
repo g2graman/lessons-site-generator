@@ -1,7 +1,7 @@
 ---
 title: 'Article #1'
 createdDate: '2017-05-02'
-updatedDate: '2017-05-06'
+updatedDate: '2017-12-07'
 author: Fabien BERNARD
 tags:
   - test
@@ -17,4 +17,5 @@ My awesome article
 -   [ ] Write an awesome article
 
 ```javascript
+
 ```
