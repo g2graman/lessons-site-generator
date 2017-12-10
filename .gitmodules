@@ -1,3 +1,6 @@
 [submodule "bridge"]
 	path = bridge
 	url = git@github.com:bridge-school/content.git
+[submodule "Submod"]
+	url = https://github.com/bridge-school/bridgeschool.io.git
+	branch = master
