@@ -47,9 +47,9 @@ Run `yarn build` to create static site ready to host (`/public`)
     -   [ ] [Helmet](https://github.com/nfl/react-helmet)
 -   [x] [Semantic-ui](http://react.semantic-ui.com) for styling
 
-## Files structure
+## File Structure
 
-     .
+     │
      ├── data                          // website data (included into graphQL)
      │   ├── author.json               // list of blog authors
      │   ├── avatars                   // authors avatars
@@ -72,8 +72,7 @@ Run `yarn build` to create static site ready to host (`/public`)
      ├── tools                         // miscs tools for dev
      │   └── update-post-date.js       // update post date hook
      ├── tsconfig.json                 // typescript configuration
-     ├── tslint.json                   // tslint configuration
-     └── yarn.lock                     // yarn lock file
+     └── tslint.json                   // tslint configuration
 
 # Development Tools
 
