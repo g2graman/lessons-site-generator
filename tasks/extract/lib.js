@@ -1,7 +1,7 @@
 'use strict';
 
 const R = require('ramda');
-const zip = require('lodash.zip');
+const { zip } = require('lodash');
 const request = require('request-promise');
 const extraFs = require('fs-extra-promise');
 

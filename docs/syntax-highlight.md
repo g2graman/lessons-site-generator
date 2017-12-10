@@ -1,0 +1,5 @@
+---
+---
+```javascript
+const CODE = 'code';
+```

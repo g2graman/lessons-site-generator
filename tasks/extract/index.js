@@ -3,7 +3,7 @@
 const path = require('path');
 
 const R = require('ramda');
-const pick = require('lodash.pick');
+const { pick } = require('lodash');
 const matter = require('gray-matter');
 const through = require('through2');
 const Vinyl = require('vinyl');
@@ -120,7 +120,7 @@ module.exports = function (gulp, $) {
   return function () {
     const options = getOptions($);
 
-    return gulp.src(['./data/workshop/**/*.md'])
+    return gulp.src(['./docs/**/*.md'])
       .pipe(through.obj((file, enc, cb) => {
         return extractJsCodeBlocksForFile(file, options)
           .then(newContent => {
