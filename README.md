@@ -8,8 +8,6 @@
 
 Demo: <https://fabien0102-gatsby-starter.netlify.com/>
 
-Storybook: <https://fabien0102-gatsby-starter.netlify.com/docs/>
-
 Gatsby 1.0 starter for generate awesome static website working with a nice env development.
 
 ## Warning
@@ -39,7 +37,6 @@ Run `yarn build` to create static site ready to host (`/public`)
     -   [x] blog in markdown
 -   [x] Best practices tools
     -   [x] [Jest](https://facebook.github.io/jest/) / [Enzyme](http://airbnb.io/enzyme/)
-    -   [x] [Storybook](https://storybooks.js.org/)
     -   [x] [Typescript](https://www.typescriptlang.org/) / [tslint](https://palantir.github.io/tslint/)
     -   [x] [xo linter](https://github.com/sindresorhus/xo)
     -   [x] [Remark-lint](https://github.com/wooorm/remark-lint)
@@ -49,8 +46,6 @@ Run `yarn build` to create static site ready to host (`/public`)
 -   [ ] SEO
     -   [ ] [Helmet](https://github.com/nfl/react-helmet)
 -   [x] [Semantic-ui](http://react.semantic-ui.com) for styling
--   [x] Lazyboy tools
-    -   [x] [plop](https://github.com/amwmedia/plop) templates -> `yarn generate`
 
 ## Files structure
 
@@ -61,13 +56,6 @@ Run `yarn build` to create static site ready to host (`/public`)
      │   └── blog                      // all blog data (posts, images)
      ├── gatsby-config.js              // gatsby configuration
      ├── gatsby-node.js                // gatsby node hooks
-     ├── generators                    // generators (`yarn generate`)
-     │   ├── workshop-post-generator.js    // `blog post` generator
-     │   ├── component-generator.js    // `component` generator
-     │   ├── page-generator.js         // `page` generator
-     │   ├── plopfile.js               // generators entry
-     │   ├── templates                 // all templates (handlebar notation)
-     │   └── utils.js                  // utils scripts for generators
      ├── package.json
      ├── public                        // output folder (in .gitignore)
      ├── README.md                     // this file
@@ -87,11 +75,10 @@ Run `yarn build` to create static site ready to host (`/public`)
      ├── tslint.json                   // tslint configuration
      └── yarn.lock                     // yarn lock file
 
-## Plop generators - `yarn generate`
+# Development Tools
 
-To avoid any boring copy/past, this starter-kit have many generators to permit 
-simple bootstrap of current file pattern (eg. components/pages/blog posts).
+## GraphiQL
 
-You can add/delete/modify any generators into `/generators` folder.
+After running the development server with `npm run develop`, and once it has generated the static site, you can go to `http://localhost:8000/___graphql` and run interactive GraphQL queries if you want to see what data those queries return.
 
-Be lazy and have fun!
+There are also sample queries stored under `./queries`. For example, if you take `./queries/BlogPages.query` and paste the contents at the page at `http://localhost:8000/___graphql`, you can get a query which returns the data representing all the blog pages.

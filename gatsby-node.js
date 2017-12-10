@@ -35,7 +35,7 @@ exports.createPages = ({graphql, boundActionCreators}) => {
   const {createPage} = boundActionCreators;
 
   return new Promise((resolve, reject) => {
-    const templates = ['blogPost', 'tagsPage', 'blogPage']
+    const templates = ['blogPost', 'tagsPage', 'blogPage'] // TODO: can determine this dynamically from templates dir
       .reduce((mem, templateName) => {
         return Object.assign({}, mem,
         {[templateName]: path.resolve(`src/templates/${kebabCase(templateName)}.tsx`)});
@@ -62,6 +62,7 @@ exports.createPages = ({graphql, boundActionCreators}) => {
       if (result.errors) {
         return reject(result.errors);
       }
+
       const posts = result.data.posts.edges.map(p => p.node);
 
       // Create workshop pages

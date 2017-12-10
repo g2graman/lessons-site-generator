@@ -2,7 +2,6 @@
 
 const matter = require('gray-matter');
 const R = require('ramda');
-// Const entities = require('entities');
 const through = require('through2');
 const Vinyl = require('vinyl');
 const Mustache = require('mustache');
@@ -74,6 +73,10 @@ const metadataReducer = (file, originalContent, markdownMetadata) => {
     });
 };
 
+const cleanMarkdownFrontmatter = markdownData => {
+  return R.omit(['custom'], markdownData);
+};
+
 const frameJsCodeBlocksForFile = (file, options) => {
   const originalContent = file.contents.toString('utf-8');
   const parsedMarkdown = matter(originalContent);
@@ -82,11 +85,7 @@ const frameJsCodeBlocksForFile = (file, options) => {
 
   if (markdownMetadata) {
     const {content: newContent} = metadataReducer(file, originalContent, markdownMetadata);
-    console.log(newContent);
-
-    const newMarkdownContent = matter.stringify(newContent, parsedMarkdown.data, {});
-
-    // Console.log(newMarkdownContent);
+    const newMarkdownContent = matter.stringify(newContent, cleanMarkdownFrontmatter(parsedMarkdown.data), {});
 
     return extractLib.handleDryRunMode(file.path, newMarkdownContent, options);
   }
@@ -106,7 +105,7 @@ module.exports = function (gulp, $) {
       .pipe(through.obj((file, enc, cb) => {
         return frameJsCodeBlocksForFile(file, options).then(newContent => {
           if (typeof newContent === 'undefined') {
-            return cb(null, null);
+            return cb(null, null); // Omit file from pipe
           }
 
           return cb(
