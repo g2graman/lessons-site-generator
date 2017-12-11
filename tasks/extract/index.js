@@ -120,7 +120,7 @@ module.exports = function (gulp, $) {
   return function () {
     const options = getOptions($);
 
-    return gulp.src(['./data/workshop/**/*.md'])
+    return gulp.src(['./docs/**/*.md'])
       .pipe(through.obj((file, enc, cb) => {
         return extractJsCodeBlocksForFile(file, options)
           .then(newContent => {
