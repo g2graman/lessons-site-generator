@@ -22,7 +22,7 @@
     "serve": "npx serve out -s -p 5002",
     "docs": "./dist/bin/cli.js docs --outdir=out --font=Overpass --codeStyle=tomorrow-night",
     "docs:prod": "./dist/bin/cli.js docs --outdir=out --prod --font=Overpass --codeStyle=solarized-light --theme=light",
-    "pages": "npm run docs:prod && npx gh-pages -d out",
+    "pages": "npx gulp && npm run docs:prod && npx gh-pages -d out",
     "lint": "npx eslint --format=node_modules/eslint-formatter-pretty 'libs/**/*.@(js|jsx)'",
     "lint:msg": "npx validate-commit-msg",
     "format": "npx prettier-eslint --write --print-width 120 'libs/**/*.@(js|jsx)'",
