@@ -1,0 +1,27 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "extends": [
+    "standard",
+    "react-app"
+  ],
+  "plugins": [
+    "flowtype",
+    "react"
+  ],
+  "rules": {
+    "import/no-webpack-loader-syntax": "off",
+    "import/first": "off",
+    "standard/no-callback-literal": "off"
+  }
+}

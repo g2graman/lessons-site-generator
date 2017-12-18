@@ -1,4 +1,4 @@
-[![](./docs/basic/images/logo-250x250.png)](https://rhiokim.github.io/flybook)
+![](./basic/images/logo-250x250.png)
 
 Just write markdown, Flybook will create your book.
 
@@ -10,19 +10,10 @@ Rewrited using by **React** and **React DOM Server**
 Already we know that we can have a number of document tools to publish markdown docs.
 So flybook will keep in simplest way to generate static web site for writing the manual of project
 
-## How flybook works
-![](./docs/media/flybook-flow-detail.png)
-
-## Features
-
-* Custom Styling (Google Fonts, Highlight.js)
-* Theme (only support `light` and `dark` now)
-* Responsive
-
 ## How to use flybook
 
 For example, Flybook documentation structure look like below
-```
+```shell
 $ ls /path/to/project/docs
   docs
   |____advanced
@@ -36,7 +27,7 @@ $ ls /path/to/project/docs
 ```
 
 **globally**
-```
+```shell
 $ npm i -g flybook
 $ cd /path/to/project
 
@@ -45,7 +36,7 @@ $ flybook docs
 ```
 
 **with NPM Project**
-```
+```shell
 $ cd /path/to/project
 $ npm install flybook --save-dev
 $
@@ -74,8 +65,10 @@ $ npm run build
 
 After that you are able to see the notification with your code changes automatically
 
-* npm run release   // build
-* npm run docs      // generate a book with newest code
+```shell
+$ npm run release   # build
+$ npm run docs      # generate a book with newest code
+```
 
 ## License
 MIT
