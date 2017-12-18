@@ -4,10 +4,19 @@
   "main": "./dist/app.js",
   "license": "MIT",
   "engines": {
-    "node": ">=8.0.0",
-    "npm": ">=5.0.0",
+    "node": ">=8.9.3",
+    "npm": ">=5.6.0",
+    "npx": ">=9.7.1",
     "taskr": ">=1.1.0",
-    "husky": ">=0.14.3"
+    "husky": ">=0.14.3",
+    "lint-staged": ">=6.0.0",
+    "eslint": ">=4.13.1",
+    "serve": ">=6.4.2",
+    "gulp-cli": ">=1.4.0",
+    "gh-pages": ">=1.1.0",
+    "conventional-changelog": ">=1.1.7",
+    "validate-commit-msg": ">=2.14.0",
+    "prettier-eslint": ">=8.3.1"
   },
   "scripts": {
     "build": "npx taskr",
