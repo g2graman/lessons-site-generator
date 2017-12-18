@@ -49,7 +49,7 @@ const parseMarkdownFiles = async () => {
             ).then(markdownContent => {
                 return {
                     contents: markdownContent,
-                    title: filePath.split('.md').join('')
+                    title: startCase(path.basename(filePath.split('.md').join('')))
                 }
             });
         })
@@ -69,7 +69,7 @@ const getPosts = async () => {
         .map((parsedMarkdown) => {
             return {
                 id: kebabCase(parsedMarkdown.title),
-                title: parsedMarkdown.title || startCase(parsedMarkdown.title),
+                title: parsedMarkdown.title,
                 ...parsedMarkdown.contents.data,
                 body: marked(parsedMarkdown.contents.content)
             };
@@ -154,6 +154,7 @@ const renderToHtml = (renderToString, App, meta, prodStats) => {
 };
 
 export default {
+    siteRoot: 'https://g2graman.github.io/lessons-site-generator',
     getSiteProps: () => ({
         title: 'React Static',
     }),
