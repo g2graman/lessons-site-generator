@@ -19,7 +19,7 @@
     "prettier-eslint": ">=8.3.1"
   },
   "scripts": {
-    "start": "npm run build && npm run docs",
+    "start": "npm run build && npm run docs && npm run serve",
     "build": "npx taskr",
     "release": "npx taskr release",
     "serve": "npx serve out -s -p 5002",
@@ -112,7 +112,7 @@
     "validate-commit-msg": "^2.12.2"
   },
   "bin": {
-    "taskr": "./dist/bin/cli.js"
+    "flybook": "./dist/bin/cli.js"
   },
   "files": [
     "dist",

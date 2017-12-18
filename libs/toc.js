@@ -17,7 +17,7 @@ const compare = (obj1, obj2) => {
 const clean = (source, dest) => {
   for (let attr in source) {
     if (typeof source[attr] !== 'object') {
-      if (!dest.hasOwnProperty(attr)) {
+      if (dest && !dest.hasOwnProperty(attr)) {
         delete source[attr]
       }
     } else {

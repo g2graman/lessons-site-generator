@@ -14,8 +14,8 @@ import _document from './_document'
 import App from '../pages/App'
 
 let pkg = {
-  name: 'taskr',
-  description: 'taskr',
+  name: 'FlyBook',
+  description: 'FlyBook',
   homepage: '',
   author: {},
   repository: {
@@ -126,7 +126,7 @@ export default ({ docDir, outDir, silent, prod, theme, font, codeStyle }) => {
 
   /* copy static assets */
   copy(join(__dirname, '..', '..', 'static'), join(outDir, 'static')).then(result => {
-    console.log(`> taskr was generated at ${outDir}`)
+    console.log(`> FlyBook was generated at ${outDir}`)
   })
 
   /* copy assets which is used in docs */
