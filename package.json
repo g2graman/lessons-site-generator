@@ -19,6 +19,7 @@
     "prettier-eslint": ">=8.3.1"
   },
   "scripts": {
+    "start": "npm run build && npm run docs",
     "build": "npx taskr",
     "release": "npx taskr release",
     "serve": "npx serve out -s -p 5002",

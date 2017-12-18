@@ -39,10 +39,10 @@ export async function build (taskr) {
 
 export default async function (taskr) {
   await taskr.start('build')
-  await taskr.watch('bin/*', 'bin')
-  await taskr.watch('components/*', 'components')
-  await taskr.watch('libs/**/*.js', ['libs'])
-  await taskr.watch('pages/**/*.js', 'copy')
+  /*await taskr.watch('bin/!*', 'bin')
+  await taskr.watch('components/!*', 'components')
+  await taskr.watch('libs/!**!/!*.js', ['libs'])
+  await taskr.watch('pages/!**!/!*.js', 'copy')*/
 }
 
 export async function release (taskr) {

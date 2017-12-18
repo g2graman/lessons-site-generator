@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 import { resolve, join, normalize, sep } from 'path'
 import { existsSync } from 'fs'
 import inquirer from 'inquirer'
@@ -34,7 +35,7 @@ const argv = parseArgs(process.argv.slice(2), {
 })
 
 if (argv.version) {
-  console.log(`Flybook v${pkg.version}`)
+  console.log(`taskr v${pkg.version}`)
   process.exit(0)
 }
 
@@ -42,18 +43,18 @@ if (argv.help || !argv._[0]) {
   console.log(
     `
     Description
-      FlyBook is a simple utility to generate static website that look like online manual.
+      taskr is a simple utility to generate static website that look like online manual.
 
     Usage
-      $ flybook <outdir> [options]
+      $ taskr <outdir> [options]
       <outdir> represents where the compiled dist folder should go.
 
     If no directory is provided, the 'out' folder will be created in the current directory.
-    You can set a custom folder in config https://rhiokim.github.io/flybook
+    You can set a custom folder in config https://rhiokim.github.io/taskr
 
     Options
       -h, --help    - list this help
-      -v, --version - version of FlyBook
+      -v, --version - version of taskr
       -o, --outdir  - set the output dir (defaults to 'out')
       -s, --silent  - do not print any messages to console
       -t, --theme   - set the theme
@@ -66,7 +67,7 @@ if (argv.help || !argv._[0]) {
 
 if (argv._[0] === sep || argv._[0] === '.' || argv._[0] === '..') {
   console.log(
-    "> FlyBook doesn't support as root directory (/), current working directory (./), and parent directory (../)"
+    "> taskr doesn't support as root directory (/), current working directory (./), and parent directory (../)"
   )
   process.exit(1)
 }
@@ -81,7 +82,7 @@ const gen = () => {
     theme: argv.theme,
     font: argv.font,
     codeStyle: argv.codeStyle,
-    outDir: normalize(argv.outdir ? resolve(argv.outdir) : resolve(dir, '..', 'out_flybook'))
+    outDir: normalize(argv.outdir ? resolve(argv.outdir) : resolve(dir, '..', 'out_taskr'))
   }
 
   updateTOC(dir)
@@ -102,13 +103,13 @@ if (!existsSync(join(dir, 'toc.yml'))) {
       gen()
     } else {
       console.log(
-        '> No `toc.yml` file found. Did you mean to run `flybook` in the parent (`../`) directory?'
+        '> No `toc.yml` file found. Did you mean to run `taskr` in the parent (`../`) directory?'
       )
       process.exit(1)
     }
   })
 } else {
-  // `toc.yml` file found, but wannt renew
+  // `toc.yml` file found, but want renew
   if (argv.toc) {
     inquirer
       .prompt([
@@ -131,5 +132,3 @@ if (!existsSync(join(dir, 'toc.yml'))) {
 
 const notifier = updateNotifier({ pkg })
 notifier.notify()
-
-// console.log(notifier.update);
