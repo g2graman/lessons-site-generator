@@ -2,11 +2,24 @@ import React from 'react'
 import fs from 'fs'
 import {kebabCase, startCase} from 'lodash'
 import {readdir, readFile} from 'mz/fs'
+import glob from 'glob-promise'
 import matter from 'gray-matter'
 import path from 'path'
 import webpack from 'webpack'
 import {ReportChunks} from 'react-universal-component'
 import flushChunks from 'webpack-flush-chunks'
+import marked from 'marked'
+
+marked.setOptions({
+  renderer: new marked.Renderer(),
+  gfm: true,
+  tables: true,
+  breaks: false,
+  pedantic: false,
+  sanitize: false,
+  smartLists: true,
+  smartypants: false
+});
 
 const resolve = p => path.resolve(__dirname, p)
 const nodeModules = resolve('./node_modules')
@@ -26,7 +39,8 @@ const externals = fs
     }, {})
 
 const parseMarkdownFiles = async () => {
-    let markdownFiles = await readdir('./docs');
+    let markdownFiles = await glob(path.resolve('.', 'bridge', 'resources', '**', '*.md'));
+
     let allMarkdownContent = await Promise.all(
         markdownFiles.map((filePath) => {
             return readFile(
@@ -57,7 +71,7 @@ const getPosts = async () => {
                 id: kebabCase(parsedMarkdown.title),
                 title: parsedMarkdown.title || startCase(parsedMarkdown.title),
                 ...parsedMarkdown.contents.data,
-                body: parsedMarkdown.contents.content
+                body: marked(parsedMarkdown.contents.content)
             };
         });
 };
@@ -84,12 +98,14 @@ const getDocument = ({Html, Head, Body, children, renderMeta}) => (
             content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"
         />
     </Head>
-    <Body className="slug-home">
-    {children}
-    {
-        renderMeta.scripts &&
-        renderMeta.scripts.map(script => <script type="text/javascript" src={`/${script}`}/>)
-    }
+    <Body>
+        <div className="slug-home">
+          {children}
+          {
+            renderMeta.scripts &&
+            renderMeta.scripts.map(script => <script type="text/javascript" src={`/${script}`}/>)
+          }
+        </div>
     </Body>
     </Html>
 );

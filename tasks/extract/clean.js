@@ -82,7 +82,7 @@ module.exports = function (gulp, $) {
   return function () {
     const options = getOptions($);
 
-    return gulp.src('./docs/**/*.md')
+    return gulp.src('./bridge/resources/**/*.md')
       .pipe($.if(options.c, getModifiedFiles($)))
       .pipe($.if(options.c, ignoreEmptyFiles($)))
       .pipe($.debug())
