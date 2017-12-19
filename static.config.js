@@ -8,21 +8,14 @@ import path from 'path'
 import webpack from 'webpack'
 import {ReportChunks} from 'react-universal-component'
 import flushChunks from 'webpack-flush-chunks'
-import marked from 'marked'
 
-marked.setOptions({
-  renderer: new marked.Renderer(),
-  gfm: true,
-  tables: true,
-  breaks: false,
-  pedantic: false,
-  sanitize: false,
-  smartLists: true,
-  smartypants: false
-});
+import CDNConfig from './config/cdn.json'
+import marked from './config/marked';
 
-const resolve = p => path.resolve(__dirname, p)
-const nodeModules = resolve('./node_modules')
+const resolveFromRoot = p => path.resolve(__dirname, p);
+const nodeModules = resolveFromRoot('node_modules');
+
+const NPM_SCRIPT_USED = process.env.npm_lifecycle_event;
 
 // for SSR of dynamic imports
 const externals = fs
@@ -36,10 +29,12 @@ const externals = fs
     .reduce((externals, moduleName) => {
         externals[moduleName] = moduleName
         return externals
-    }, {})
+    }, {});
 
 const parseMarkdownFiles = async () => {
-    let markdownFiles = await glob(path.resolve('.', 'bridge', 'resources', '**', '*.md'));
+    let markdownFiles = await glob(
+      path.resolve('.', 'bridge', 'resources', '**', '*.md')
+    );
 
     let allMarkdownContent = await Promise.all(
         markdownFiles.map((filePath) => {
@@ -64,7 +59,7 @@ const parseMarkdownFiles = async () => {
         });
 };
 
-const getPosts = async () => {
+const getModules = async () => {
     return (await parseMarkdownFiles())
         .map((parsedMarkdown) => {
             return {
@@ -80,10 +75,10 @@ const STATIC_ROUTES = [{
     path: '/',
     component: 'src/containers/Home',
 },
-    {
-        path: '/about',
-        component: 'src/containers/About',
-    }];
+{
+    path: '/about',
+    component: 'src/containers/About',
+}];
 
 const getProps = (props, key) => () => ({
     [key]: props
@@ -91,39 +86,39 @@ const getProps = (props, key) => () => ({
 
 const getDocument = ({Html, Head, Body, children, renderMeta}) => (
     <Html lang="en-US">
-    <Head>
-        <meta charSet="UTF-8"/>
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"
-        />
-    </Head>
-    <Body>
-        <div className="slug-home">
-          {children}
-          {
-            renderMeta.scripts &&
-            renderMeta.scripts.map(script => <script type="text/javascript" src={`/${script}`}/>)
-          }
-        </div>
-    </Body>
+        <Head>
+            <meta charSet="UTF-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/>
+            {
+              CDNConfig.styles.map((CDNStyleURL, index) => <link key={index+ '-style'} rel="stylesheet" href={CDNStyleURL}/>)
+            }
+        </Head>
+        <Body>
+            <div className="slug-home">
+              {children}
+              {
+                renderMeta.scripts &&
+                renderMeta.scripts.map(script => <script type="text/javascript" src={`/${script}`}/>)
+              }
+            </div>
+        </Body>
     </Html>
 );
 
-const handleWebpackBuild = (config, {stage}) => {
+const handleWebpackBuild = (config, {defaultLoaders, stage}) => {
     if (stage === 'node') {
-        config.externals = externals
+        config.externals = externals;
 
         config.plugins.push(
             new webpack.optimize.LimitChunkCountPlugin({
                 maxChunks: 1,
             }),
-        )
+        );
     }
 
     if (stage === 'prod') {
-        config.output.filename = 'app.[chunkHash:6].js'
-        config.output.chunkFilename = '[name].[chunkHash:6].js'
+        config.output.filename = 'app.[chunkHash:6].js';
+        config.output.chunkFilename = '[name].[chunkHash:6].js';
 
         config.plugins.push(
             new webpack.optimize.CommonsChunkPlugin({
@@ -131,45 +126,51 @@ const handleWebpackBuild = (config, {stage}) => {
                 filename: 'bootstrap.[chunkHash:6].js',
                 minChunks: Infinity,
             }),
-        )
+        );
     }
 
-    return config
+    return config;
 };
 
 const renderToHtml = (renderToString, App, meta, prodStats) => {
-    const chunkNames = []
+    const chunkNames = [];
+
     const appHtml = renderToString(
         <ReportChunks report={chunkName => chunkNames.push(chunkName)}>
             <App/>
         </ReportChunks>,
-    )
+    );
 
-    const {scripts} = flushChunks(prodStats, {
-        chunkNames,
-    })
+    const { scripts, styles, cssHash } = flushChunks(prodStats, {
+      chunkNames
+    });
 
-    meta.scripts = scripts.filter(script => script.split('.')[0] !== 'app')
-    return appHtml
+    meta.scripts = scripts.filter(script => script.split('.')[0] !== 'app');
+    meta.styles = styles;
+    meta.cssHash = cssHash;
+
+    return appHtml;
 };
 
 export default {
-    siteRoot: 'https://g2graman.github.io/lessons-site-generator',
+    siteRoot: NPM_SCRIPT_USED === 'pages'
+        ? 'https://g2graman.github.io/lessons-site-generator'
+        : null,
     getSiteProps: () => ({
         title: 'React Static',
     }),
     getRoutes: async () => {
-        let posts = await getPosts();
+        let modules = await getModules();
 
         return [
             ...STATIC_ROUTES, {
-                path: '/blog',
-                component: 'src/containers/Blog',
-                getProps: getProps(posts, 'posts'),
-                children: posts.map(post => ({
-                    path: `/post/${post.id}`,
-                    component: 'src/containers/Post',
-                    getProps: getProps(post, 'post'),
+                path: '/modules',
+                component: 'src/containers/Modules',
+                getProps: getProps(modules, 'modules'),
+                children: modules.map(bridgeModule => ({
+                    path: `/${bridgeModule.id}`,
+                    component: 'src/containers/Module',
+                    getProps: getProps(bridgeModule, 'module'),
                 })),
             }, {
                 is404: true,

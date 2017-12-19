@@ -5,12 +5,12 @@ import { AppContainer } from 'react-hot-loader'
 // Your top level component
 import App from './App'
 
-// Export your top level component as JSX (for static rendering)
-export default App
-
 // Render your app
 if (typeof document !== 'undefined') {
-  const renderMethod = module.hot ? ReactDOM.render : ReactDOM.hydrate
+  const renderMethod = module.hot
+    ? ReactDOM.render
+    : ReactDOM.hydrate;
+
   const render = Comp => {
     renderMethod(
       <AppContainer>
@@ -18,15 +18,20 @@ if (typeof document !== 'undefined') {
       </AppContainer>,
       document.getElementById('root'),
     )
-  }
+  };
 
   // Render!
-  render(App)
+  render(App);
 
   // Hot Module Replacement
   if (module.hot) {
     module.hot.accept('./App', () => {
-      render(require('./App').default)
-    })
+      render(
+        require('./App').default
+      )
+    });
   }
 }
+
+// Export your top level component as JSX (for static rendering)
+export default App

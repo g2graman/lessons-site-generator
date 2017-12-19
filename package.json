@@ -3,8 +3,10 @@
   "version": "1.0.1",
   "license": "MIT",
   "scripts": {
-    "start": "react-static start",
+    "start": "nodemon -w static.config.js --exec \"react-static start\"",
     "build": "react-static build",
+    "pages": "react-static build",
+    "deploy": "npm run pages && gh-pages -d dist",
     "serve": "serve dist -p 3000"
   },
   "dependencies": {
@@ -25,6 +27,7 @@
     "marked": "^0.3.7",
     "mustache": "^2.3.0",
     "mz": "^2.7.0",
+    "prop-types": "^15.6.0",
     "ramda": "^0.25.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
