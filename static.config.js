@@ -6,7 +6,6 @@ import glob from 'glob-promise'
 import matter from 'gray-matter'
 import path from 'path'
 import webpack from 'webpack'
-import {ReportChunks} from 'react-universal-component'
 import flushChunks from 'webpack-flush-chunks'
 
 import CDNConfig from './config/cdn.json'
@@ -16,20 +15,6 @@ const resolveFromRoot = p => path.resolve(__dirname, p);
 const nodeModules = resolveFromRoot('node_modules');
 
 const NPM_SCRIPT_USED = process.env.npm_lifecycle_event;
-
-// for SSR of dynamic imports
-const externals = fs
-    .readdirSync(nodeModules)
-    .filter(
-        moduleName =>
-            !/\.bin|require-universal-module|react-universal-component|webpack-flush-chunks/.test(
-                moduleName,
-            ),
-    )
-    .reduce((externals, moduleName) => {
-        externals[moduleName] = moduleName
-        return externals
-    }, {});
 
 const parseMarkdownFiles = async () => {
     let markdownFiles = await glob(
@@ -73,11 +58,11 @@ const getModules = async () => {
 
 const STATIC_ROUTES = [{
     path: '/',
-    component: 'src/containers/Home',
+    component: 'src/pages/Home',
 },
 {
     path: '/about',
-    component: 'src/containers/About',
+    component: 'src/pages/About',
 }];
 
 const getProps = (props, key) => () => ({
@@ -107,8 +92,6 @@ const getDocument = ({Html, Head, Body, children, renderMeta}) => (
 
 const handleWebpackBuild = (config, {defaultLoaders, stage}) => {
     if (stage === 'node') {
-        config.externals = externals;
-
         config.plugins.push(
             new webpack.optimize.LimitChunkCountPlugin({
                 maxChunks: 1,
@@ -132,26 +115,6 @@ const handleWebpackBuild = (config, {defaultLoaders, stage}) => {
     return config;
 };
 
-const renderToHtml = (renderToString, App, meta, prodStats) => {
-    const chunkNames = [];
-
-    const appHtml = renderToString(
-        <ReportChunks report={chunkName => chunkNames.push(chunkName)}>
-            <App/>
-        </ReportChunks>,
-    );
-
-    const { scripts, styles, cssHash } = flushChunks(prodStats, {
-      chunkNames
-    });
-
-    meta.scripts = scripts.filter(script => script.split('.')[0] !== 'app');
-    meta.styles = styles;
-    meta.cssHash = cssHash;
-
-    return appHtml;
-};
-
 export default {
     siteRoot: NPM_SCRIPT_USED === 'pages'
         ? 'https://g2graman.github.io/lessons-site-generator'
@@ -165,20 +128,19 @@ export default {
         return [
             ...STATIC_ROUTES, {
                 path: '/modules',
-                component: 'src/containers/Modules',
+                component: 'src/pages/Modules',
                 getProps: getProps(modules, 'modules'),
                 children: modules.map(bridgeModule => ({
                     path: `/${bridgeModule.id}`,
-                    component: 'src/containers/Module',
+                    component: 'src/pages/Module',
                     getProps: getProps(bridgeModule, 'module'),
                 })),
             }, {
                 is404: true,
-                component: 'src/containers/404',
+                component: 'src/pages/404',
             },
         ]
     },
-    renderToHtml,
     Document: getDocument,
     webpack: handleWebpackBuild
 }
