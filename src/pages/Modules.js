@@ -8,11 +8,11 @@ export default getRouteProps(({ modules }) => (
     All Modules:
     <ul>
       {
-          modules.map(bridgeModule => (
-            <li key={bridgeModule.id}>
-              <Link to={`/modules/${bridgeModule.id}/`}>{bridgeModule.title}</Link>
-            </li>
-          ))
+        modules.map(bridgeModule => (
+          <li key={bridgeModule.id}>
+            <Link to={`/modules/${bridgeModule.id}/`}>{bridgeModule.title}</Link>
+          </li>
+        ))
       }
     </ul>
   </div>

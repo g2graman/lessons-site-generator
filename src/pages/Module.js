@@ -6,6 +6,6 @@ export default getRouteProps(({ module }) => (
     <Link to="/">{'<'} Back</Link>
     <br />
     <h3>{module.title}</h3>
-    <p dangerouslySetInnerHTML={{__html: module.body}}/>
+    <p dangerouslySetInnerHTML={{ __html: module.body }} />
   </div>
 ))

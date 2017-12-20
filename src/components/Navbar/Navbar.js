@@ -1,15 +1,15 @@
 import React from 'react'
 import { Link } from 'react-static'
-import {Toolbar, ToolbarRow, ToolbarTitle, ToolbarSection} from 'rmwc/Toolbar';
+import { Toolbar, ToolbarRow, ToolbarSection } from 'rmwc/Toolbar'
 
-import './navbar.css';
-import Logo from './logo.svg';
+import './navbar.css'
+import Logo from './logo.svg'
 
 export default () => (
   <Toolbar>
     <ToolbarRow>
       <ToolbarSection alignStart className="brand">
-        <Logo width={48} height={48}/>
+        <Logo width={48} height={48} />
       </ToolbarSection>
       <ToolbarSection className="navigation">
         <nav>
@@ -19,4 +19,4 @@ export default () => (
       </ToolbarSection>
     </ToolbarRow>
   </Toolbar>
-);
+)

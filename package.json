@@ -3,15 +3,17 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon -w static.config.js --exec \"react-static start\"",
+    "start": "nodemon -w static.config.js --exec \"npx react-static start\"",
     "start:prod": "nodemon -w static.config.js -w src --exec \"npm run build && npm run serve\"",
-    "build": "react-static build",
-    "pages": "react-static build",
+    "build": "npx react-static build",
+    "pages": "npx react-static build",
     "deploy": "npm run pages && gh-pages -d dist",
-    "serve": "serve dist -p 3000"
+    "serve": "npx serve dist -p 3000",
+    "lint": "find src -name '*.js' | xargs npx eslint"
   },
   "dependencies": {
     "commander": "^2.12.2",
+    "eslint": "^4.13.1",
     "fs-extra": "^5.0.0",
     "fs-extra-promise": "^1.0.1",
     "glob-promise": "^3.3.0",
@@ -42,10 +44,10 @@
     "rmwc": "0.0.1-rc12",
     "through2": "^2.0.3",
     "vinyl": "^2.1.0",
-    "vinyl-transform": "^1.0.0"
+    "vinyl-transform": "^1.0.0",
+    "serve": "^6.1.0"
   },
   "devDependencies": {
-    "eslint-config-react-tools": "1.x.x",
-    "serve": "^6.1.0"
+    "eslint-config-react-tools": "^1.0.10"
   }
 }

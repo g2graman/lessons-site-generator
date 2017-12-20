@@ -9,7 +9,7 @@ import App from './App'
 if (typeof document !== 'undefined') {
   const renderMethod = module.hot
     ? ReactDOM.render
-    : ReactDOM.hydrate;
+    : ReactDOM.hydrate
 
   const render = Comp => {
     renderMethod(
@@ -18,18 +18,18 @@ if (typeof document !== 'undefined') {
       </AppContainer>,
       document.getElementById('root'),
     )
-  };
+  }
 
   // Render!
-  render(App);
+  render(App)
 
   // Hot Module Replacement
   if (module.hot) {
     module.hot.accept('./App', () => {
       render(
-        require('./App').default
+        require('./App').default,
       )
-    });
+    })
   }
 }
 

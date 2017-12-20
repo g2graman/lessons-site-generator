@@ -1,5 +1,0 @@
----
----
-```javascript
-const CODE = 'code';
-```
