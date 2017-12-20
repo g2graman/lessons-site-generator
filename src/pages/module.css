@@ -6,6 +6,13 @@ code {
     font-size: 85%;
     background-color: rgba(27,31,35,0.05);
     border-radius: 3px;
+
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+:not(pre) > code {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 pre code {
@@ -36,4 +43,8 @@ pre {
     line-height: 1.45;
     background-color: #f6f8fa;
     border-radius: 3px;
+
+    margin-top: 0;
+    margin-bottom: 0;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
