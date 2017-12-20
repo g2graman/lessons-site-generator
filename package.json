@@ -1,9 +1,10 @@
 {
   "name": "lessons-site-generator",
-  "version": "1.0.1",
+  "version": "0.0.1",
   "license": "MIT",
   "scripts": {
     "start": "nodemon -w static.config.js --exec \"react-static start\"",
+    "start:prod": "nodemon -w static.config.js -w src --exec \"npm run build && npm run serve\"",
     "build": "react-static build",
     "pages": "react-static build",
     "deploy": "npm run pages && gh-pages -d dist",
@@ -24,6 +25,7 @@
     "gulp-load-plugins": "^1.5.0",
     "lodash": "^4.17.4",
     "marked": "^0.3.7",
+    "material-components-web": "^0.27.0",
     "mustache": "^2.3.0",
     "mz": "^2.7.0",
     "next": "^4.2.1",
@@ -33,16 +35,17 @@
     "react-dom": "^16.2.0",
     "react-router": "^4.2.0",
     "react-static": "^4.7.0-beta.0",
+    "react-svg-loader": "^2.1.0",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "require-dir": "^0.3.2",
+    "rmwc": "0.0.1-rc12",
     "through2": "^2.0.3",
     "vinyl": "^2.1.0",
     "vinyl-transform": "^1.0.0"
   },
   "devDependencies": {
     "eslint-config-react-tools": "1.x.x",
-    "serve": "^6.1.0",
-    "webpack-flush-chunks": "^1.2.2"
+    "serve": "^6.1.0"
   }
 }

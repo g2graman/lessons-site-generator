@@ -1,18 +1,13 @@
 import React from 'react'
-import fs from 'fs'
 import {kebabCase, startCase} from 'lodash'
 import {readdir, readFile} from 'mz/fs'
 import glob from 'glob-promise'
 import matter from 'gray-matter'
 import path from 'path'
-import webpack from 'webpack'
-import flushChunks from 'webpack-flush-chunks'
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 import CDNConfig from './config/cdn.json'
 import marked from './config/marked';
-
-const resolveFromRoot = p => path.resolve(__dirname, p);
-const nodeModules = resolveFromRoot('node_modules');
 
 const NPM_SCRIPT_USED = process.env.npm_lifecycle_event;
 
@@ -87,28 +82,33 @@ const getDocument = ({Html, Head, Body, children, renderMeta}) => (
 );
 
 const handleWebpackBuild = (config, {defaultLoaders, stage}) => {
-    if (stage === 'node') {
-        config.plugins.push(
-            new webpack.optimize.LimitChunkCountPlugin({
-                maxChunks: 1,
-            }),
-        );
-    }
+    config.module.rules = [
+      {
+        oneOf: [
+          {
+            test: /\.svg$/,
+            exclude: /node_modules/,
+            use: [
+              "babel-loader",
+              {
+                loader: 'react-svg-loader', // 'react-svg'
+                query: {
+                  svgo: {
+                    pretty: true,
+                    plugins: [{ removeStyleElement: true }]
+                  }
+                }
+              }
+            ]
+          },
+          defaultLoaders.cssLoader,
+          defaultLoaders.jsLoader,
+          defaultLoaders.fileLoader,
+        ],
+      },
+    ];
 
-    if (stage === 'prod') {
-        config.output.filename = 'app.[chunkHash:6].js';
-        config.output.chunkFilename = '[name].[chunkHash:6].js';
-
-        config.plugins.push(
-            new webpack.optimize.CommonsChunkPlugin({
-                name: 'bootstrap',
-                filename: 'bootstrap.[chunkHash:6].js',
-                minChunks: Infinity,
-            }),
-        );
-    }
-
-    return config;
+    return config
 };
 
 export default {
