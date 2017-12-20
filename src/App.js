@@ -9,9 +9,8 @@ export default () => (
   <Router>
     <div>
       <nav>
-        <Link to="/">Home</Link>
+        <Link to="/">Modules</Link>
         <Link to="/about">About</Link>
-        <Link to="/modules">Modules</Link>
       </nav>
       <div className="content">
         <Routes />
