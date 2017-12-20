@@ -5,6 +5,7 @@ import Routes from 'react-static-routes';
 import 'material-components-web/dist/material-components-web.css';
 
 import './app.css';
+import './colours.css';
 import Navbar from './components/Navbar/Navbar';
 
 export default () => (
