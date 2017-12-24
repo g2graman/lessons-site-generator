@@ -1,4 +1,4 @@
-const LANGUAGE = 'javascript';
+const LANGUAGE = 'js';
 
 // START TOKENS
 const START_CODE_MARKDOWN_TOKEN = `\`\`\`${LANGUAGE}`;

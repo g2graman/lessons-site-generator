@@ -36,11 +36,17 @@ const metadataReducer = (file, originalContent, markdownMetadata) => {
     2
   ) + CONFIG.MARKDOWN_METADATA_DELIMITER.length;
 
-  const contentAfterMetadata = originalContent.slice(markdownContentStart);
+  const contentAfterMetadata = originalContent.slice(markdownContentStart).split('/').join('\\');
 
   const mustacheParseChunks = Mustache.parse(contentAfterMetadata, [
     CONFIG.START_CODE_MARKDOWN_TOKEN,
     CONFIG.END_CODE_MARKDOWN_TOKEN
+  ]);
+
+  mustacheParseChunks.content = mustacheParseChunks.map(chunk => [
+    chunk[0],
+    chunk[1].split('\\').join('/'),
+    ... chunk.slice(2)
   ]);
 
   return mustacheParseChunks.reduce(
@@ -99,7 +105,7 @@ module.exports = function (gulp, $) {
   return function () {
     const source = options.d ?
       extractTask(gulp, $)() :
-      gulp.src('./data/workshop/**/*.md');
+      gulp.src('./bridge/resources/**/*.md');
 
     return source
       .pipe(through.obj((file, enc, cb) => {
