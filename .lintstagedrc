@@ -5,7 +5,7 @@
       "git add"
     ],
     "*.{js, jsx}": [
-      "npx eslint -c .eslintrc.js",
+      "npx eslint -c .eslintrc.js --fix",
       "git add"
     ]
   },

@@ -1,1 +1,3 @@
-Bridge Content by [Abdella Ali and Purvi Kanal](https://github.com/rangle/bridge) is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
+[lessons-site-generator](https://github.com/g2graman/lessons-site-generator) proper (this package, project, and repository), by [Francesco Gramano](https://github.com/g2graman), is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
+
+[Bridge Content](https://github.com/bridge-school/content) (introduced and rooted in the `./bridge` directory as a git submodule) by [Abdella Ali and Purvi Kanal](https://github.com/rangle/bridge) is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
