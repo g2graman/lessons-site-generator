@@ -10,4 +10,4 @@ Please review the contribution guidelines at [CONTRIBUTING.md](.github/CONTRIBUT
 Please review the issue template at [ISSUE_TEMPLATE.md](.github/ISSUE_TEMPLATE.md)
 
 ## License
-MIT
+[CC-BY-4.0](./LICENSE.md)
