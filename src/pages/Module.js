@@ -1,8 +1,8 @@
-import React from 'react'
-import { getRouteProps, Link } from 'react-static'
-import { Button } from 'rmwc/Button'
+import React from "react";
+import { getRouteProps, Link } from "react-static";
+import { Button } from "rmwc/Button";
 
-import './module.css'
+import "./module.css";
 
 export default getRouteProps(({ module }) => (
   <div>
@@ -13,4 +13,4 @@ export default getRouteProps(({ module }) => (
     <h3>{module.title}</h3>
     <p dangerouslySetInnerHTML={{ __html: module.body }} />
   </div>
-))
+));

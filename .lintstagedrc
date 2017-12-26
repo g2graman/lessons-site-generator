@@ -1,0 +1,14 @@
+{
+  "linters": {
+    "*.css": [
+      "npx stylelint --fix --config .stylelintrc",
+      "git add"
+    ],
+    "*.{js, jsx}": [
+      "npx eslint -c .eslintrc.js",
+      "git add"
+    ]
+  },
+  "concurrent": true,
+  "subTaskConcurrency": 2
+}

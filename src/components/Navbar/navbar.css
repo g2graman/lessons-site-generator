@@ -9,12 +9,12 @@
   padding: 5px;
 }
 
+a {
+  text-decoration: none;
+}
+
 nav a {
   color: white;
   padding: 1rem calc(1rem + 5px) 1rem calc(1rem + 5px);
   display: inline-block;
-}
-
-a {
-  text-decoration: none;
 }

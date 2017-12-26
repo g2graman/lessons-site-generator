@@ -1,9 +1,9 @@
-import React from 'react'
-import { Link } from 'react-static'
-import { Toolbar, ToolbarRow, ToolbarSection } from 'rmwc/Toolbar'
+import React from "react";
+import { Link } from "react-static";
+import { Toolbar, ToolbarRow, ToolbarSection } from "rmwc/Toolbar";
 
-import './navbar.css'
-import Logo from './logo.svg'
+import "./navbar.css";
+import Logo from "./logo.svg";
 
 export default () => (
   <Toolbar>
@@ -19,4 +19,4 @@ export default () => (
       </ToolbarSection>
     </ToolbarRow>
   </Toolbar>
-)
+);

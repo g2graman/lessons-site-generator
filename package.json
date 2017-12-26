@@ -9,11 +9,14 @@
     "pages": "npx react-static build",
     "deploy": "npm run pages && gh-pages -d dist",
     "serve": "npx serve dist -p 3000",
-    "lint": "find src -name '*.js' | xargs npx eslint"
+    "lint:js": "find src -name '*.js' | xargs npx eslint -c .eslintrc.js --fix",
+    "lint:css": "find src -name '*.css' | xargs npx stylelint --fix --config .stylelintrc",
+    "lint": "npx concurrently -k \"npm run lint:js\" \"npm run lint:css\"",
+    "precommit": "npx lint-staged",
+    "prepush": "npm run precommit"
   },
   "dependencies": {
     "commander": "^2.12.2",
-    "eslint": "^4.13.1",
     "fs-extra": "^5.0.0",
     "fs-extra-promise": "^1.0.1",
     "glob-promise": "^3.3.0",
@@ -48,6 +51,13 @@
     "serve": "^6.1.0"
   },
   "devDependencies": {
-    "eslint-config-react-tools": "^1.0.10"
+    "eslint": "^4.13.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-react-tools": "^1.0.10",
+    "eslint-plugin-prettier": "^2.4.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^6.0.0",
+    "prettier": "^1.9.2",
+    "stylelint-config-standard": "^18.0.0"
   }
 }

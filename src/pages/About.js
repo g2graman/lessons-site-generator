@@ -1,4 +1,4 @@
-import React from 'react'
-import MyComponent from '../components/stub/MyComponent'
+import React from "react";
+import MyComponent from "../components/stub/MyComponent";
 
-export default props => <MyComponent {...props} />
+export default props => <MyComponent {...props} />;
