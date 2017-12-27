@@ -24,7 +24,7 @@
     "gray-matter": "^3.1.1",
     "gulp": "^3.9.1",
     "gulp-debug": "^3.1.0",
-    "gulp-foreach": "^0.1.0",
+    "gulp-flatmap": "^1.0.0",
     "gulp-git": "^2.4.2",
     "gulp-if": "^2.0.2",
     "gulp-ignore": "^2.0.2",

@@ -86,6 +86,6 @@ module.exports = function (gulp, $) {
       .pipe($.if(options.c, getModifiedFiles($)))
       .pipe($.if(options.c, ignoreEmptyFiles($)))
       .pipe($.debug())
-      .pipe($.foreach(cleanMarkdownMetadataForFile));
+      .pipe($.flatmap(cleanMarkdownMetadataForFile));
   };
 };

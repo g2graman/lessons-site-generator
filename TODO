@@ -1,2 +1,0 @@
-* Remove use of gulp-foreach (it's deprecated) -- use gulp-tap or gulp-flatmap instead
-* TypeScript?
