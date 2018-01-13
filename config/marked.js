@@ -1,4 +1,4 @@
-import marked from 'marked';
+import marked from "marked";
 
 marked.setOptions({
   renderer: new marked.Renderer(),
@@ -12,4 +12,3 @@ marked.setOptions({
 });
 
 export default marked;
-export { marked };

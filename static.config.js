@@ -1,6 +1,6 @@
 import React from "react";
 import { kebabCase, startCase } from "lodash";
-import { readdir, readFile } from "mz/fs";
+import { readFile } from "mz/fs";
 import glob from "glob-promise";
 import matter from "gray-matter";
 import path from "path";
@@ -12,37 +12,34 @@ import marked from "./config/marked";
 const NPM_SCRIPT_USED = process.env.npm_lifecycle_event;
 
 const parseMarkdownFiles = async () => {
-  let markdownFiles = await glob(
+  const markdownFiles = await glob(
     path.resolve(".", "bridge", "resources", "**", "*.md")
   );
 
   const allMarkdownContent = await Promise.all(
-    markdownFiles.map(filePath => readFile(
-                path.resolve('.', 'docs', filePath),
-                'utf8'
-            ).then(markdownContent => {
-                return {
-                    contents: markdownContent,
-                    title: startCase(path.basename(filePath.split('.md').join('')))
-                }
-            }))
+    markdownFiles.map(filePath =>
+      readFile(path.resolve(".", "docs", filePath), "utf8").then(
+        markdownContent => ({
+          contents: markdownContent,
+          title: startCase(path.basename(filePath.split(".md").join("")))
+        })
+      )
+    )
   );
 
   return allMarkdownContent.map(markdownFile => ({
-                title: markdownFile.title,
-                contents: matter(markdownFile.contents)
-            }));
+    title: markdownFile.title,
+    contents: matter(markdownFile.contents)
+  }));
 };
 
-const getModules = async () => (await parseMarkdownFiles())
-        .map((parsedMarkdown) => {
-            return {
-                id: kebabCase(parsedMarkdown.title),
-                title: parsedMarkdown.title,
-                ...parsedMarkdown.contents.data,
-                body: marked(parsedMarkdown.contents.content)
-            };
-        });
+const getModules = async () =>
+  (await parseMarkdownFiles()).map(parsedMarkdown => ({
+    id: kebabCase(parsedMarkdown.title),
+    title: parsedMarkdown.title,
+    ...parsedMarkdown.contents.data,
+    body: marked(parsedMarkdown.contents.content)
+  }));
 
 const STATIC_ROUTES = [
   {
@@ -57,12 +54,18 @@ const getProps = (props, key) => () => ({
 
 const getDocument = ({ Html, Head, Body, children, renderMeta }) => (
   <Html lang="en-US">
-      <Head>
-          <meta charSet="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
-          {
+    <Head>
+      <meta charSet="UTF-8" />
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"
+      />
       {CDNConfig.styles.map((CDNStyleURL, index) => (
-        <link key={index + "-style"} rel="stylesheet" href={CDNStyleURL} />
+        <link
+          key={["style", index].join("-")}
+          rel="stylesheet"
+          href={CDNStyleURL}
+        />
       ))}
     </Head>
     <Body>
@@ -77,7 +80,7 @@ const getDocument = ({ Html, Head, Body, children, renderMeta }) => (
   </Html>
 );
 
-const handleWebpackBuild = (config, { defaultLoaders, stage }) => {
+const handleWebpackBuild = (config, { defaultLoaders }) => {
   config.module.rules = [
     {
       oneOf: [
@@ -116,7 +119,7 @@ export default {
     title: "React Static"
   }),
   getRoutes: async () => {
-    let modules = await getModules();
+    const modules = await getModules();
 
     return [
       ...STATIC_ROUTES,
