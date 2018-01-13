@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
 
 // Your top level component
-import App from "./App";
+import App from "./components/app";
 
 // Render your app
 if (typeof document !== "undefined") {
@@ -23,8 +23,8 @@ if (typeof document !== "undefined") {
 
   // Hot Module Replacement
   if (module.hot) {
-    module.hot.accept("./App", () => {
-      render(require("./App").default);
+    module.hot.accept("./components/app", () => {
+      render(require("./components/app").default);
     });
   }
 }

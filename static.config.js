@@ -44,7 +44,7 @@ const getModules = async () =>
 const STATIC_ROUTES = [
   {
     path: "/about",
-    component: "src/pages/About"
+    component: "src/pages/about/about"
   }
 ];
 
@@ -125,17 +125,17 @@ export default {
       ...STATIC_ROUTES,
       {
         path: "/",
-        component: "src/pages/Modules",
+        component: "src/pages/modules/modules",
         getProps: getProps(modules, "modules"),
         children: modules.map(bridgeModule => ({
           path: `modules/${bridgeModule.id}`,
-          component: "src/pages/Module",
+          component: "src/pages/modules/module/module",
           getProps: getProps(bridgeModule, "module")
         }))
       },
       {
         is404: true,
-        component: "src/pages/404"
+        component: "src/pages/404/404"
       }
     ];
   },

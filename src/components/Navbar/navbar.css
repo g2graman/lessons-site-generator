@@ -6,7 +6,7 @@
   justify-content: unset;
   order: unset;
   flex: unset;
-  padding: 5px;
+  padding: 5px 5px 5px 10px;
 }
 
 a {
