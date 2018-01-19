@@ -1,32 +1,30 @@
-'use strict';
+const path = require("path");
 
-const path = require('path');
+// const extraFs = require('fs-extra-promise');
+const through = require("through2");
+const transform = require("vinyl-transform");
+const R = require("ramda");
+const matter = require("gray-matter");
 
-// Const extraFs = require('fs-extra-promise');
-const through = require('through2');
-const transform = require('vinyl-transform');
-const R = require('ramda');
-const matter = require('gray-matter');
-
-const getOptions = require('../options');
+const getOptions = require("../options");
 
 const cleanMarkdownMetadata = (content, file) => {
   const parsedMarkdown = matter(content);
 
-  const metadataInMarkdown = R.path(['data', 'custom', 'metadata'], parsedMarkdown);
-  if (path.extname(file.path) === '.md' && (
-      !metadataInMarkdown ||
-      !Array.isArray(metadataInMarkdown)
-    )
+  const metadataInMarkdown = R.path(
+    ["data", "custom", "metadata"],
+    parsedMarkdown
+  );
+  if (
+    path.extname(file.path) === ".md" &&
+    (!metadataInMarkdown || !Array.isArray(metadataInMarkdown))
   ) {
     /* Const newMarkdown = {
       ...parsedMarkdown,
       data: R.omit(['custom'], (parsedMarkdown.data || {}))
     }; */
-
     // const newMarkdownFileContent = matter.stringify(newMarkdown.content, newMarkdown.data, {});
     // Console.log(newMarkdownFileContent);
-
     // TODO: modify below
     /* process.exit(0);
 
@@ -40,52 +38,53 @@ const cleanMarkdownMetadata = (content, file) => {
       console.error(err);
       process.exit(-1); // eslint-disable-line unicorn/no-process-exit
     }); */
-
   }
 };
 
-const getModifiedFiles = $ => transform(filename => {
-  return through(function (file, encoding, done) {
-    return $.git.status({args: '-s', quiet: true}, (err, stdout) => {
-      if (err) {
-        throw err;
-      }
+const getModifiedFiles = $ =>
+  transform(filename =>
+    through(function(file, encoding, done) {
+      return $.git.status({ args: "-s", quiet: true }, (err, stdout) => {
+        if (err) {
+          throw err;
+        }
 
-      const modifiedFiles = stdout.split('\n')
-        .filter(Boolean)
-        .map(s => s.trim())
-        .filter(line => line.startsWith('M'))
-        .map(line => line.slice(2))
-        .map(filePath => path.resolve('./', filePath));
+        const modifiedFiles = stdout
+          .split("\n")
+          .filter(Boolean)
+          .map(s => s.trim())
+          .filter(line => line.startsWith("M"))
+          .map(line => line.slice(2))
+          .map(filePath => path.resolve("./", filePath));
 
-      if (modifiedFiles.indexOf(filename) > -1) {
-        this.push(file);
-      }
+        if (modifiedFiles.indexOf(filename) > -1) {
+          this.push(file);
+        }
 
-      return done();
-    });
-  });
-});
+        return done();
+      });
+    })
+  );
 
-const ignoreEmptyFiles = $ => {
-  return $.ignore.include(file => {
-    return Boolean(file.contents.toString().length);
-  });
-};
+const ignoreEmptyFiles = $ =>
+  $.ignore.include(file => Boolean(file.contents.toString().length));
 
 const cleanMarkdownMetadataForFile = (stream, file) => {
-  cleanMarkdownMetadata(file.contents.toString('utf-8'), file);
+  cleanMarkdownMetadata(file.contents.toString("utf-8"), file);
   return stream; // Leave the stream unchanged, in case of a pipe following this
 };
 
-module.exports = function (gulp, $) {
-  return function () {
+module.exports = function(gulp, $) {
+  return function() {
     const options = getOptions($);
 
-    return gulp.src('./bridge/resources/**/*.md')
-      .pipe($.if(options.c, getModifiedFiles($)))
-      .pipe($.if(options.c, ignoreEmptyFiles($)))
-      .pipe($.debug())
-      .pipe($.flatmap(cleanMarkdownMetadataForFile));
+    return (
+      gulp
+        .src("./bridge/resources/**/*.md")
+        .pipe($.if(options.c, getModifiedFiles($)))
+        .pipe($.if(options.c, ignoreEmptyFiles($)))
+        // .pipe($.debug())
+        .pipe($.flatmap(cleanMarkdownMetadataForFile))
+    );
   };
 };

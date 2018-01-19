@@ -1,19 +1,20 @@
 import React from "react";
-import { kebabCase, startCase } from "lodash";
+import { kebabCase, startCase, pick } from "lodash";
 import { readFile } from "mz/fs";
 import glob from "glob-promise";
 import matter from "gray-matter";
 import path from "path";
-// import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 import CDNConfig from "./config/cdn.json";
 import marked from "./config/marked";
 
 const NPM_SCRIPT_USED = process.env.npm_lifecycle_event;
 
+const ROOT_CONTENT_DIR = path.resolve(".", "bridge", "resources");
+
 const parseMarkdownFiles = async () => {
   const markdownFiles = await glob(
-    path.resolve(".", "bridge", "resources", "**", "*.md")
+    path.resolve(ROOT_CONTENT_DIR, "**", "*.md")
   );
 
   const allMarkdownContent = await Promise.all(
@@ -21,23 +22,26 @@ const parseMarkdownFiles = async () => {
       readFile(path.resolve(".", "docs", filePath), "utf8").then(
         markdownContent => ({
           contents: markdownContent,
-          title: startCase(path.basename(filePath.split(".md").join("")))
+          title: startCase(path.basename(filePath.split(".md").join(""))),
+          path: path
+            .relative(ROOT_CONTENT_DIR, filePath)
+            .split(".md")
+            .join("")
         })
       )
     )
   );
 
   return allMarkdownContent.map(markdownFile => ({
-    title: markdownFile.title,
+    ...markdownFile,
     contents: matter(markdownFile.contents)
   }));
 };
 
 const getModules = async () =>
   (await parseMarkdownFiles()).map(parsedMarkdown => ({
+    ...pick(parsedMarkdown, ["contents.data", "title", "path"]),
     id: kebabCase(parsedMarkdown.title),
-    title: parsedMarkdown.title,
-    ...parsedMarkdown.contents.data,
     body: marked(parsedMarkdown.contents.content)
   }));
 
@@ -128,7 +132,7 @@ export default {
         component: "src/pages/modules/modules",
         getProps: getProps(modules, "modules"),
         children: modules.map(bridgeModule => ({
-          path: `modules/${bridgeModule.id}`,
+          path: ["modules", bridgeModule.path].join("/"),
           component: "src/pages/modules/module/module",
           getProps: getProps(bridgeModule, "module")
         }))
