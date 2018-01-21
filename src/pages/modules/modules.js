@@ -73,7 +73,7 @@ const getModuleLink = (bridgeModule, withPrefix = true, DELIMITER = "/") =>
   (withPrefix ? ["modules"] : []).concat([bridgeModule.path]).join(DELIMITER);
 
 const makeModuleLink = bridgeModule => (
-  <li key={bridgeModule.id}>
+  <li style={{ listStyle: "none" }} key={bridgeModule.id}>
     <Link to={getModuleLink(bridgeModule)}>{bridgeModule.title}</Link>
   </li>
 );
@@ -87,7 +87,7 @@ const makeModuleTree = rootModulesWithChildren =>
     }
 
     return (
-      <li key={rootModuleKey}>
+      <li style={{ listStyle: "none" }} key={rootModuleKey}>
         {capitalize(rootModuleKey)} <ul>{makeModuleTree(rootModule)}</ul>
       </li>
     );
