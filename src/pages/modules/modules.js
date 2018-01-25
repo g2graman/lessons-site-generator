@@ -1,6 +1,6 @@
 import React from "react";
 import { getRouteProps, Link } from "react-static";
-import { get, merge, capitalize } from "lodash";
+import { get, merge } from "lodash";
 
 import Footer from "../../components/footer/footer";
 
@@ -34,7 +34,7 @@ const convertFilePathToJSON = (
       };
     }
 
-    // / nestedPath.length === <= 1
+    // nestedPath.length === <= 1
 
     const fullPath = [childDir].concat(nestedPath).join(DELIMITER);
     const remainingPath = nestedPath.join(DELIMITER);
@@ -83,12 +83,20 @@ const makeModuleLinks = modules => modules.map(makeModuleLink);
 const makeModuleTree = rootModulesWithChildren =>
   Object.entries(rootModulesWithChildren).map(([rootModuleKey, rootModule]) => {
     if (rootModule.title) {
+      // if the module is a leaf in the tree, don't recurse
       return makeModuleLink(rootModule);
     }
 
+    const rootModuleName = /^\d+/.test(rootModuleKey)
+      ? rootModuleKey
+          .split("-")
+          .slice(1) // name started with number; remove first chunk
+          .join(" ") // replace what would have been dashes with spaces
+      : rootModuleKey;
+
     return (
       <li style={{ listStyle: "none" }} key={rootModuleKey}>
-        {capitalize(rootModuleKey)} <ul>{makeModuleTree(rootModule)}</ul>
+        {rootModuleName} <ul>{makeModuleTree(rootModule)}</ul>
       </li>
     );
   });

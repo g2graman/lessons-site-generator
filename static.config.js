@@ -12,6 +12,9 @@ const NPM_SCRIPT_USED = process.env.npm_lifecycle_event;
 
 const ROOT_CONTENT_DIR = path.resolve(".", "bridge", "resources");
 
+const getBaseNameWithoutExtension = filePath =>
+  filePath.split(path.extname(filePath)).join("");
+
 const parseMarkdownFiles = async () => {
   const markdownFiles = await glob(
     path.resolve(ROOT_CONTENT_DIR, "**", "*.md")
@@ -22,11 +25,12 @@ const parseMarkdownFiles = async () => {
       readFile(path.resolve(".", "docs", filePath), "utf8").then(
         markdownContent => ({
           contents: markdownContent,
-          title: startCase(path.basename(filePath.split(".md").join(""))),
-          path: path
-            .relative(ROOT_CONTENT_DIR, filePath)
-            .split(".md")
-            .join("")
+          title: startCase(
+            getBaseNameWithoutExtension(path.basename(filePath))
+          ),
+          path: getBaseNameWithoutExtension(
+            path.relative(ROOT_CONTENT_DIR, filePath)
+          )
         })
       )
     )
