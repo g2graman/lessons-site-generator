@@ -5,10 +5,7 @@ export default class extends Component {
     return <p style={{
         float: 'left',
         width: '100%',
-        textAlign: 'center',
-        position: 'absolute',
-        bottom: 0,
-        height: '60px'
+        textAlign: 'center'
     }}>
       Feedback? Let us know at
         <a style={{paddingLeft: '5px' }} href='mailto:hello@bridgeschool.io'>
