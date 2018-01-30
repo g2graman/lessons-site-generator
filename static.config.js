@@ -49,13 +49,6 @@ const getModules = async () =>
     body: marked(parsedMarkdown.contents.content)
   }));
 
-const STATIC_ROUTES = [
-  {
-    path: "/about",
-    component: "src/pages/about/about"
-  }
-];
-
 const getProps = (props, key) => () => ({
   [key]: props
 });
@@ -121,7 +114,7 @@ const handleWebpackBuild = (config, { defaultLoaders }) => {
 export default {
   siteRoot:
     NPM_SCRIPT_USED === "pages"
-      ? "https://g2graman.github.io/lessons-site-generator"
+      ? "https://g2graman.github.io/bridge-modules"
       : null,
   getSiteProps: () => ({
     title: "React Static"
@@ -129,8 +122,12 @@ export default {
   getRoutes: async () => {
     const modules = await getModules();
 
+    const CONTENT_LICENSE = await readFile(
+      path.resolve(".", "bridge", "LICENSE.md"),
+      "utf8"
+    );
+
     return [
-      ...STATIC_ROUTES,
       {
         path: "/",
         component: "src/pages/modules/modules",
@@ -140,6 +137,16 @@ export default {
           component: "src/pages/modules/module/module",
           getProps: getProps(bridgeModule, "module")
         }))
+      },
+      {
+        path: "/about",
+        component: "src/pages/about/about",
+        getProps: getProps(
+          {
+            content: marked(CONTENT_LICENSE)
+          },
+          "licenses"
+        )
       },
       {
         is404: true,

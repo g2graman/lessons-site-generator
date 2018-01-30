@@ -1,15 +1,15 @@
 {
-  "name": "lessons-site-generator",
+  "name": "bridge-modules-site",
   "version": "0.0.1",
   "license": "CC-BY-4.0",
-  "repository": "github:g2graman/lessons-site-generator",
+  "repository": "github:g2graman/bridge-modules",
   "private": true,
   "scripts": {
     "start": "npx nodemon -w static.config.js --exec \"npx react-static start\"",
     "start:prod": "npx nodemon -w static.config.js -w src --exec \"npm run build && npm run serve\"",
     "build": "npx react-static build",
     "pages": "npx react-static build",
-    "deploy": "npm run pages && gh-pages -d dist",
+    "deploy": "npm run pages && npx gh-pages -d dist",
     "serve": "npx serve dist -p 3000",
     "lint:js": "find src -name '*.js' | xargs npx eslint -c .eslintrc.js --fix",
     "lint:css": "find src -name '*.css' | xargs npx stylelint --fix --config .stylelintrc",

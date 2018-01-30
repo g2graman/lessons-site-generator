@@ -132,8 +132,6 @@ const makeModuleList = modules => (
 
 export default getRouteProps(({ modules }) => (
   <div>
-    <br />
-    All Modules:
     {makeModuleList(modules)}
     <Footer />
   </div>

@@ -1,11 +1,11 @@
-lessons-site-generator
+bridge-modules
 ========================
 
 ###### _This repository uses [react-static](https://github.com/nozzle/react-static) to facilitate static site generation_
 
 
 ## Demo
-The current demo can be found at [https://g2graman.github.io/lessons-site-generator/](https://g2graman.github.io/lessons-site-generator/)
+The current demo can be found at [https://g2graman.github.io/bridge-modules/](https://g2graman.github.io/bridge-modules/)
 
 ## Contributing
 Please review the contribution guidelines at [CONTRIBUTING.md](.github/CONTRIBUTING.md), the code of conduct at [CODE_OF_CONDUCT.md](.github/CODE_OF_CONDUCT.md), and the pull request template at [PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md)
