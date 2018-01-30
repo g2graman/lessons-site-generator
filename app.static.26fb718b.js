@@ -627,10 +627,7 @@ var _class = function (_Component) {
         { style: {
             float: 'left',
             width: '100%',
-            textAlign: 'center',
-            position: 'absolute',
-            bottom: 0,
-            height: '60px'
+            textAlign: 'center'
           } },
         'Feedback? Let us know at',
         _react2.default.createElement(
@@ -885,4 +882,4 @@ exports.default = function (_ref) {
 /***/ })
 /******/ ]);
 });
-//# sourceMappingURL=app.static.c7bb3a7e.js.map
+//# sourceMappingURL=app.static.26fb718b.js.map
