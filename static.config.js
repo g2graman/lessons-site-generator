@@ -114,7 +114,7 @@ const handleWebpackBuild = (config, { defaultLoaders }) => {
 export default {
   siteRoot:
     NPM_SCRIPT_USED === "pages"
-      ? "https://g2graman.github.io/bridge-modules"
+      ? "https://g2graman.github.io/lessons-site-generator"
       : null,
   getSiteProps: () => ({
     title: "React Static"
